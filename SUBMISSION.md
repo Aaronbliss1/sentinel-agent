@@ -15,7 +15,7 @@
 - Upload to X and reply with your submission per the hackathon rules.
 
 
-verify
+## 4. Verify
 ```bash
 pip install -r requirements.txt
 cp .env.example .env      # optional — works without any keys (paper + VADER)
