@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Sentinel — Binance Agent OS Dashboard</title>
+<style>
+:root{--bg:#0B0E14;--card:#151A23;--border:#222839;--accent:#F0B90B;--green:#00C853;--red:#FF3B30;--yellow:#FFA726;--muted:#8A94A6;--text:#E6EAF2}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Inter,system-ui,-apple-system,SegoeUI,Roboto,sans-serif;background:var(--bg);color:var(--text);line-height:1.5}
+a{color:var(--accent)}
+.wrap{max-width:1220px;margin:0 auto;padding:18px 18px 40px}
+.header{display:flex;flex-wrap:wrap;gap:16px;align-items:center;justify-content:space-between;padding:14px 18px;background:linear-gradient(135deg,#151A23 0%,#1A182E 100%);border:1px solid var(--border);border-radius:16px}
+.logo{font-weight:800;font-size:22px;letter-spacing:-0.02em}
+.logo span{color:var(--accent)}
+.badge{font-size:12px;padding:6px 10px;border-radius:999px;border:1px solid var(--border);background:#0E1117;color:var(--muted)}
+.badge.live{background:rgba(0,200,83,.12);border-color:rgba(0,200,83,.3);color:var(--green);font-weight:700}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:16px}
+@media(max-width:900px){.grid3{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:14px}
+.card h3{font-size:13px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px}
+.gauge{height:8px;background:#0E1117;border-radius:999px;overflow:hidden;margin:8px 0}
+.gauge span{display:block;height:100%;border-radius:999px}
+.score{font-size:28px;font-weight:800}
+.signal{font-size:12px;padding:4px 8px;border-radius:999px;font-weight:700}
+.signal.buy{background:rgba(0,200,83,.15);color:var(--green);border:1px solid rgba(0,200,83,.3)}
+.signal.sell{background:rgba(255,59,48,.15);color:var(--red);border:1px solid rgba(255,59,48,.3)}
+.signal.hold{background:rgba(255,167,38,.15);color:var(--yellow);border:1px solid rgba(255,167,38,.3)}
+.small{font-size:12px;color:var(--muted)}
+.news{font-size:13px;line-height:1.45;margin:6px 0 8px;color:#C8D0E0}
+.metrics{display:flex;gap:10px;flex-wrap:wrap}
+.metric{background:#0E1117;border:1px solid var(--border);border-radius:12px;padding:10px 12px;flex:1;min-width:110px}
+.metric b{font-size:16px}
+.chart{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:14px;margin-top:16px}
+.kv{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.kv div{background:#0E1117;border:1px solid var(--border);border-radius:12px;padding:12px}
+.kv b{font-size:18px}
+table{width:100%;border-collapse:collapse;margin-top:10px;font-size:13px}
+th{text-align:left;color:var(--muted);font-weight:600;padding:8px 6px;border-bottom:1px solid var(--border)}
+td{padding:9px 6px;border-bottom:1px solid rgba(34,40,57,.6)}
+.status{font-size:11px;padding:3px 7px;border-radius:999px;font-weight:700}
+.status.ok{background:rgba(0,200,83,.15);color:var(--green)}
+.status.block{background:rgba(255,167,38,.15);color:var(--yellow)}
+.status.hold{background:rgba(138,148,166,.15);color:var(--muted)}
+.footer{margin-top:18px;padding:14px;background:#0E1117;border:1px solid var(--border);border-radius:16px}
+.hl{color:var(--accent);font-weight:700}
+pre{background:#0E1117;border:1px solid var(--border);border-radius:12px;padding:12px;overflow:auto;font-size:11.5px;line-height:1.5;margin-top:8px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="header">
+    <div>
+      <div class="logo">🤖 SENTINEL <span>— Binance Agent OS</span></div>
+      <div class="small">Track A • $20K • Sentiment Trader for BTC • BNB • ETH • <span class="hl">MCP https://agent.binance.com/mcp/agentic</span> • Streamable HTTP</div>
+      <div class="small" style="margin-top:4px">Official SDK: <b style="color:var(--text)">binance-connector-python</b> + MCP • Free LLM: Gemini Flash / Groq / VADER fallback • Paper → Live in 1 env var</div>
+    </div>
+    <div style="text-align:right">
+      <div class="badge live">🟢 PAPER TRADING (Dry-Run)</div>
+      <div class="small" style="margin-top:8px">Agentic Virtual Sub-Account • No withdrawals • Confirm-before-execute</div>
+      <div class="small">Next cycle: <b style="color:var(--text)">2 min</b> • Lagos, Sep 5 2026</div>
+    </div>
+  </div>
+
+  <!-- Sentiment -->
+  <div class="grid3">
+    <div class="card">
+      <h3>BTC / USDT — Bitcoin</h3>
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+        <div class="score" style="color:var(--green)">78<span style="font-size:14px;color:var(--muted)">/100</span></div>
+        <span class="signal buy">BUY</span>
+        <span class="small">Conf 85% • 3 headlines • 2m ago</span>
+      </div>
+      <div class="gauge"><span style="width:78%;background:var(--green)"></span></div>
+      <div class="news">"BlackRock Bitcoin ETF sees $520M inflow, largest in 3 months"<br><span class="small">→ scored 78 BULLISH via gemini-1.5-flash • + RSI 62, MACD bullish</span></div>
+      <div class="metrics">
+        <div class="metric"><div class="small">Price</div><b>$65,234.50</b><div class="small" style="color:var(--green)">+1.84% 24h</div></div>
+        <div class="metric"><div class="small">Signal</div><b style="color:var(--green)">BUY</b><div class="small">Risk: APPROVED</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <h3>BNB / USDT — BNB Chain</h3>
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+        <div class="score" style="color:var(--green)">71<span style="font-size:14px;color:var(--muted)">/100</span></div>
+        <span class="signal buy">BUY</span>
+        <span class="small">Conf 67% • 2 headlines • 5m ago</span>
+      </div>
+      <div class="gauge"><span style="width:71%;background:var(--green)"></span></div>
+      <div class="news">"BNB Chain burns 1.2M BNB, supply reduction bullish"<br><span class="small">→ 71 BULLISH via VADER+keywords • + Trend up, RSI 58</span></div>
+      <div class="metrics">
+        <div class="metric"><div class="small">Price</div><b>$612.30</b><div class="small" style="color:var(--green)">+0.92% 24h</div></div>
+        <div class="metric"><div class="small">Signal</div><b style="color:var(--green)">BUY</b><div class="small">Notional $73.47</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <h3>ETH / USDT — Ethereum</h3>
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+        <div class="score" style="color:var(--yellow)">52<span style="font-size:14px;color:var(--muted)">/100</span></div>
+        <span class="signal hold">HOLD</span>
+        <span class="small">Conf 41% • 2 headlines • 8m ago</span>
+      </div>
+      <div class="gauge"><span style="width:52%;background:var(--yellow)"></span></div>
+      <div class="news">"Ethereum Dencun upgrade reduces fees 40%, L2s surge" — but "SEC investigates ETH staking"<br><span class="small">→ net 52 NEUTRAL • RSI 54, trend neutral → HOLD</span></div>
+      <div class="metrics">
+        <div class="metric"><div class="small">Price</div><b>$2,650.80</b><div class="small" style="color:var(--red)">-0.31% 24h</div></div>
+        <div class="metric"><div class="small">Signal</div><b style="color:var(--yellow)">HOLD</b><div class="small">No edge</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chart + Signal detail -->
+  <div style="display:grid;grid-template-columns:1.7fr .9fr;gap:14px;margin-top:14px">
+    <div class="chart">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <h3 style="margin:0">📈 BTCUSDT — 15m Klimes + Sentinel Signals</h3>
+        <span class="small">RSI 62 • MACD bullish • BB neutral • Trend up</span>
+      </div>
+      <svg viewBox="0 0 720 220" width="100%" height="220" style="margin-top:10px;background:#0E1117;border:1px solid #222839;border-radius:12px">
+        <!-- grid -->
+        <g stroke="#1E2436" stroke-width="1" opacity="0.6">
+          <line x1="40" y1="30" x2="700" y2="30"/><line x1="40" y1="70" x2="700" y2="70"/><line x1="40" y1="110" x2="700" y2="110"/><line x1="40" y1="150" x2="700" y2="150"/><line x1="40" y1="190" x2="700" y2="190"/>
+        </g>
+        <!-- price line -->
+        <polyline fill="none" stroke="#F0B90B" stroke-width="2.5" points="40,150 80,140 120,145 160,120 200,115 240,95 280,100 320,85 360,70 400,90 440,75 480,60 520,65 560,45 600,55 640,35 680,40"/>
+        <!-- candles simplified -->
+        <g fill="#00C853" opacity="0.9">
+          <rect x="240" y="95" width="8" height="18" rx="2"/><rect x="360" y="70" width="8" height="22" rx="2"/><rect x="560" y="45" width="8" height="20" rx="2"/>
+        </g>
+        <g fill="#FF3B30">
+          <rect x="400" y="75" width="8" height="18" rx="2"/><rect x="520" y="60" width="8" height="16" rx="2"/>
+        </g>
+        <!-- BUY markers -->
+        <g>
+          <polygon points="240,80 232,92 248,92" fill="#00C853" stroke="#0B0E14" stroke-width="1.5"/>
+          <text x="240" y="75" text-anchor="middle" font-size="9" font-weight="700" fill="#00C853">BUY 78</text>
+          <polygon points="360,55 352,67 368,67" fill="#00C853" stroke="#0B0E14" stroke-width="1.5"/>
+          <text x="360" y="50" text-anchor="middle" font-size="9" font-weight="700" fill="#00C853">BUY 84</text>
+          <polygon points="560,30 552,42 568,42" fill="#00C853" stroke="#0B0E14" stroke-width="1.5"/>
+          <text x="560" y="25" text-anchor="middle" font-size="9" font-weight="700" fill="#00C853">BUY 71</text>
+        </g>
+        <text x="40" y="15" font-size="10" fill="#8A94A6">Price $64,200 — $66,400 • 15m • 80 candles • Bollinger neutral</text>
+        <text x="40" y="210" font-size="9" fill="#8A94A6">00:00 &nbsp;&nbsp; 04:00 &nbsp;&nbsp; 08:00 &nbsp;&nbsp; 12:00 &nbsp;&nbsp; 16:00 &nbsp;&nbsp; NOW</text>
+      </svg>
+      <div class="small" style="margin-top:6px">Triangles = Sentinel BUY executed via MCP (sentiment 78, 84, 71). RSI filter blocked 1 chase at RSI 76.</div>
+    </div>
+    <div class="card">
+      <h3>🎯 Latest Signal — Explainable</h3>
+      <div style="font-size:18px;font-weight:800;color:var(--green)">BUY BTC • Confidence 0.85</div>
+      <div class="small">BTCUSDT • MARKET • Qty 0.001 (notional $65.23)</div>
+      <div style="margin-top:10px;padding:10px;background:#0E1117;border:1px solid var(--border);border-radius:12px;font-size:12.5px;line-height:1.5">
+        <b>Reason:</b> BTC sentiment <b style="color:var(--green)">78/100 (BUY)</b> + RSI 62 + MACD bullish + trend up → BUY. 3 headlines aggregated. ETF inflow narrative + whale accumulation.
+      </div>
+      <div style="margin-top:10px;display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <div style="background:#0E1117;border:1px solid rgba(0,200,83,.3);border-radius:10px;padding:8px;text-align:center"><div class="small">Risk</div><b style="color:var(--green)">APPROVED</b><div class="small">$65.23 &lt; $100 cap • 2.1 bps slippage</div></div>
+        <div style="background:#0E1117;border:1px solid var(--border);border-radius:10px;padding:8px;text-align:center"><div class="small">MCP</div><b>DRY_RUN_EXECUTED</b><div class="small">id mcp_a1b2c3</div></div>
+      </div>
+      <pre>{
+  "jsonrpc": "2.0",
+  "method": "tools/call",
+  "params": {
+    "name": "place_order",
+    "arguments": {
+      "symbol": "BTCUSDT",
+      "side": "BUY",
+      "type": "MARKET",
+      "quantity": "0.001",
+      "clientOrderId": "mcp_a1b2c3",
+      "reason": "BTC sentiment 78 + RSI 62"
+    }
+  },
+  "mcp_endpoint": "https://agent.binance.com/mcp/agentic"
+}</pre>
+      <div class="small">Payload sent to Binance Agent OS. Set <b style="color:var(--text)">BINANCE_DRY_RUN=false</b> to go live.</div>
+    </div>
+  </div>
+
+  <!-- Trade log + Portfolio -->
+  <div style="display:grid;grid-template-columns:1.5fr .9fr;gap:14px;margin-top:14px">
+    <div class="card">
+      <h3>📜 Trade Log — via MCP (Paper)</h3>
+      <table>
+        <tr><th>Time</th><th>Coin</th><th>Side</th><th>Qty</th><th>Price</th><th>Notional</th><th>Sentiment</th><th>Status</th></tr>
+        <tr><td>01:39:32</td><td>BNB</td><td style="color:var(--green);font-weight:700">BUY</td><td>0.0200</td><td>$617.20</td><td>$12.34</td><td>71</td><td><span class="status ok">DRY_RUN_EXECUTED</span></td></tr>
+        <tr><td>01:38:05</td><td>ETH</td><td style="color:var(--yellow);font-weight:700">HOLD</td><td>-</td><td>$2,650</td><td>-</td><td>52</td><td><span class="status hold">HOLD</span></td></tr>
+        <tr><td>01:37:11</td><td>BTC</td><td style="color:var(--green);font-weight:700">BUY</td><td>0.0010</td><td>$65,234</td><td>$65.23</td><td>78</td><td><span class="status ok">DRY_RUN_EXECUTED</span></td></tr>
+        <tr><td>01:35:10</td><td>BTC</td><td style="color:var(--yellow);font-weight:700">HOLD</td><td>-</td><td>$64,980</td><td>-</td><td>64</td><td><span class="status block">BLOCKED (RSI 76)</span></td></tr>
+        <tr><td>01:33:02</td><td>BTC</td><td style="color:var(--red);font-weight:700">SELL</td><td>0.0005</td><td>$65,100</td><td>$32.55</td><td>28</td><td><span class="status ok">DRY_RUN_EXECUTED</span></td></tr>
+      </table>
+      <div class="small" style="margin-top:8px">Every order uses SHA-256 <b style="color:var(--text)">clientOrderId</b> (idempotency) + Decimal precision respecting <b style="color:var(--text)">LOT_SIZE / TICK_SIZE</b>.</div>
+    </div>
+    <div class="card">
+      <h3>💼 Paper Portfolio (Agentic Sub-Account)</h3>
+      <div class="kv">
+        <div><div class="small">Total Equity</div><b>$1,078.42</b><div class="small" style="color:var(--green)">+7.84% today</div></div>
+        <div><div class="small">Daily P&L</div><b style="color:var(--green)">+$78.42</b><div class="small">2 wins • 1 blocked</div></div>
+      </div>
+      <div style="margin-top:12px;display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <div style="background:#0E1117;border:1px solid var(--border);border-radius:10px;padding:10px;text-align:center"><div class="small">USDT</div><b>$861.30</b></div>
+        <div style="background:#0E1117;border:1px solid var(--border);border-radius:10px;padding:10px;text-align:center"><div class="small">BTC</div><b>0.013</b><div class="small">$848</div></div>
+        <div style="background:#0E1117;border:1px solid var(--border);border-radius:10px;padding:10px;text-align:center"><div class="small">BNB</div><b>1.52</b></div>
+        <div style="background:#0E1117;border:1px solid var(--border);border-radius:10px;padding:10px;text-align:center"><div class="small">ETH</div><b>0.35</b></div>
+      </div>
+      <div style="margin-top:12px;background:#0E1117;border:1px solid var(--border);border-radius:10px;padding:10px">
+        <div class="small" style="font-weight:700;color:var(--text)">🛡️ 4-Pillar Safety</div>
+        <div class="small">✅ Idempotency (SHA-256 clientOrderId)</div>
+        <div class="small">✅ Precision (LOT_SIZE / TICK_SIZE, Decimal)</div>
+        <div class="small">✅ Risk Engine (cap $100, 50 bps, -3% kill)</div>
+        <div class="small">✅ Clock Sync + Backoff (handles 1021/429/418)</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <div style="display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;align-items:center">
+      <div><b>🏆 Hackathon Submission — Track A ($20K)</b> <span class="small">• GitHub: github.com/yourhandle/sentinel-agent • Video: 2-min demo (see demo/DEMO_SCRIPT.md) • Survey + Tweet reply</span></div>
+      <span class="signal hold" style="font-size:11px">Deadline Sept 8, 2026 23:59 UTC</span>
+    </div>
+    <div style="margin-top:10px;display:grid;grid-template-columns:repeat(3,1fr);gap:10px">
+      <div style="background:#151A23;border:1px solid var(--border);border-radius:10px;padding:10px"><b style="font-size:12px">Setup (30s)</b><pre style="margin-top:6px">pip install -r requirements.txt
+cp .env.example .env
+# add BINANCE_API_KEY + GOOGLE_API_KEY
+python -m src.agent --once --mock-news
+streamlit run dashboard/app.py</pre></div>
+      <div style="background:#151A23;border:1px solid var(--border);border-radius:10px;padding:10px"><b style="font-size:12px">MCP Connect</b><pre style="margin-top:6px">claude mcp add binance-mcp-server \
+  --transport http \
+  https://agent.binance.com/mcp/agentic
+# Then: "Use Binance MCP to show BTCUSDT price"</pre></div>
+      <div style="background:#151A23;border:1px solid var(--border);border-radius:10px;padding:10px"><b style="font-size:12px">Binance SDKs Used</b><div class="small" style="margin-top:6px">Official: binance-connector-python (REST + WS)<br>MCP: mcp==1.9.4 Streamable HTTP<br>Also: Skills Hub, Wallet Agentic Hub, x402</div><div class="small" style="margin-top:6px">Lagos, NG • No withdrawal scope ever • Fund sub-account via Profile → Sub-account → Transfer</div></div>
+    </div>
+    <div class="small" style="margin-top:10px">Built with ❤️ for Binance Agent OS Mini Hackathon • <span class="hl">Don't just read the news — trade it.</span></div>
+  </div>
+
+</div>
+</body>
+</html>
