@@ -31,3 +31,6 @@ sentinel = "src.agent:main"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+
+[tool.vercel]
+entrypoint = "api.sentiment:handler"
