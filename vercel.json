@@ -9,7 +9,7 @@
   ],
   "functions": {
     "api/**/*.py": {
-      "excludeFiles": "{src/**,dashboard/**,tests/**,demo/**,.venv/**,**/__pycache__/**,**/*.pyc,*.html}"
+      "excludeFiles": "{src/**,dashboard/**,tests/**,demo/**,.venv/**,**/__pycache__/**,**/*.pyc}"
     }
   }
 }

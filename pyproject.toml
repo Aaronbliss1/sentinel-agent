@@ -14,6 +14,12 @@ dependencies = []
 [project.scripts]
 sentinel = "src.agent:cli"
 
+[tool.vercel]
+# Required by Vercel CLI 48+/59: explicit Python entrypoint
+# (module:variable). The `handler` class in api/sentiment.py is the
+# documented BaseHTTPRequestHandler form for Vercel Python functions.
+entrypoint = "api.sentiment:handler"
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["."]

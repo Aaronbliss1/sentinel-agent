@@ -3,8 +3,20 @@ Sentinel — /api/sentiment (Vercel Python function, /api directory)
 
 Uses the documented handler form: a `handler` class subclassing
 BaseHTTPRequestHandler (see Vercel docs: Python Functions in the /api
-Directory). Stdlib only — pyproject.toml intentionally declares zero deps
-(Vercel prefers it over requirements.txt), so the function bundle stays tiny.
+Directory). The entrypoint is declared in pyproject.toml:
+
+    [tool.vercel]
+    entrypoint = "api.sentiment:handler"
+
+Stdlib only — pyproject.toml intentionally declares zero deps (Vercel
+prefers it over requirements.txt), so the function bundle stays tiny.
+
+Routing:
+  - .../sentiment        -> live paper-mode sentiment JSON
+  - / , /dashboard.html  -> the static dashboard (safety net in case the
+                            function intercepts all routes; the CDN normally
+                            serves static files directly)
+  - anything else        -> 404
 
 NOTE ON LIVE DATA: Vercel functions run in US regions where Binance returns
 HTTP 451 ("Service unavailable from a restricted location"). The full agent
@@ -14,6 +26,7 @@ so the deployed dashboard reads as live.
 """
 from http.server import BaseHTTPRequestHandler
 import json
+import os
 import random
 import time
 
@@ -49,6 +62,8 @@ _BASE = {
     },
 }
 
+_DASHBOARD_PATHS = {"/", "/dashboard", "/dashboard.html", "/index", "/index.html"}
+
 
 def _signal(score: int) -> str:
     if score >= 70:
@@ -59,9 +74,27 @@ def _signal(score: int) -> str:
 
 
 class handler(BaseHTTPRequestHandler):
-    """Vercel loads the top-level `handler` name from this file."""
+    """Vercel loads the top-level `handler` name (see [tool.vercel] in
+    pyproject.toml)."""
 
     def do_GET(self):
+        path = self.path.split("?", 1)[0].rstrip("/")
+        if not path:
+            path = "/"
+
+        if path.endswith("/sentiment"):
+            self._send_json()
+        elif path in _DASHBOARD_PATHS:
+            self._send_dashboard()
+        else:
+            self.send_response(404)
+            self.send_header("Content-Type", "application/json")
+            self.end_headers()
+            self.wfile.write(json.dumps({"error": "not found"}).encode("utf-8"))
+
+    # ---- helpers ----
+
+    def _send_json(self):
         coins = {}
         for coin, base in _BASE.items():
             score = random.randint(*base["score_range"])
@@ -92,6 +125,32 @@ class handler(BaseHTTPRequestHandler):
         self.send_header("Cache-Control", "no-store")
         self.end_headers()
         self.wfile.write(body)
+
+    def _send_dashboard(self):
+        # Vercel cwd is the project base; also try next to this file for
+        # local smoke tests.
+        candidates = [
+            "dashboard.html",
+            os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "dashboard.html"),
+        ]
+        body = b""
+        for cand in candidates:
+            try:
+                with open(cand, "rb") as f:
+                    body = f.read()
+                break
+            except OSError:
+                continue
+        if body:
+            self.send_response(200)
+            self.send_header("Content-Type", "text/html; charset=utf-8")
+            self.end_headers()
+            self.wfile.write(body)
+        else:
+            self.send_response(404)
+            self.send_header("Content-Type", "text/plain")
+            self.end_headers()
+            self.wfile.write(b"dashboard.html not found")
 
     def log_message(self, fmt, *args):
         # Keep Vercel function logs clean
