@@ -1,2 +1,23 @@
-# Vercel Python function deps - keep empty/minimal for <500MB bundle
-# api/sentiment.py uses only stdlib (json, random), so no deps needed
+# Local development & demo dependencies (run: pip install -r requirements.txt)
+#
+# Vercel deploy note: api/sentiment.py is stdlib-only, and Vercel's build
+# pipeline prefers pyproject.toml (zero deps) over this file — so the
+# serverless bundle stays tiny and deploys are fast.
+python-dotenv
+httpx
+mcp
+vaderSentiment
+feedparser
+requests
+google-genai
+groq
+openai
+pandas
+numpy
+ta
+streamlit
+plotly
+rich
+typer
+pytest
+binance-connector

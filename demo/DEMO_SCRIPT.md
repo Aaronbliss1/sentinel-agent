@@ -69,7 +69,7 @@ Show: GitHub repo + QR to https://binance.com/agent-os + tweet reply screenshot.
 Sentinel is an autonomous AI agent built on Binance Agent OS (MCP: https://agent.binance.com/mcp/agentic) that trades BTC, BNB, ETH based on market news sentiment.
 News → Gemini/VADER sentiment 0-100 → RSI/MACD/Bollinger confluence → Risk Gate → MCP place_order inside Agentic virtual sub-account.
 Paper → Live in 1 env var. Built for Binance Agent OS Mini Hackathon ($60K, Track A $20K, Sep 4-8 2026).
-GitHub: https://github.com/yourhandle/sentinel-agent
+GitHub: https://github.com/Aaronbliss1/sentinel-agent
 Stack: binance-connector-python, MCP Streamable HTTP, Gemini Free, Streamlit.
 Demo: dry-run trading, explainable reasons, 4-pillar safety.
 #Binance #AgentOS #MCP #Hackathon #AI #Trading

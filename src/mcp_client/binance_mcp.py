@@ -281,6 +281,31 @@ class BinanceMCPClient:
         data["mcp_payload"] = mcp_payload
         return data
 
+    # ============ Emergency stop (panic close) ============
+    async def cancel_all_orders(self) -> dict:
+        """Cancel every open order on the (sub)account. Paper mode: no-op."""
+        if self.dry_run or not self.api_key:
+            return {"status": "DRY_RUN", "cancelled": 0, "msg": "Paper mode — no live orders to cancel"}
+        try:
+            params = {"timestamp": self._timestamp()}
+            self._sign(params)
+            r = await self.client.get(f"{self.base_url}/api/v3/openOrders",
+                                      params=params, headers={"X-MBX-APIKEY": self.api_key})
+            orders = r.json()
+            if not isinstance(orders, list):
+                return {"status": "ERROR", "cancelled": 0, "msg": str(orders)}
+            cancelled = 0
+            for o in orders:
+                p = {"symbol": o.get("symbol"), "orderId": o.get("orderId"), "timestamp": self._timestamp()}
+                self._sign(p)
+                rr = await self.client.delete(f"{self.base_url}/api/v3/order",
+                                              params=p, headers={"X-MBX-APIKEY": self.api_key})
+                if rr.status_code == 200:
+                    cancelled += 1
+            return {"status": "OK", "cancelled": cancelled, "msg": f"Cancelled {cancelled} open order(s)"}
+        except Exception as e:
+            return {"status": "ERROR", "cancelled": 0, "msg": str(e)}
+
     # Health check for dashboard
     async def health(self) -> dict:
         try:

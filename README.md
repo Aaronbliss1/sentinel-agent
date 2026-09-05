@@ -90,7 +90,7 @@ Sentinel is an **agentic workflow** that fuses **3 signals** into 1 disciplined 
 
 ### 1. Install
 ```bash
-git clone https://github.com/yourhandle/sentinel-agent.git
+git clone https://github.com/Aaronbliss1/sentinel-agent.git
 cd sentinel-agent
 python -m venv .venv && source .venv/bin/activate  # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
@@ -185,24 +185,52 @@ Position sizing via Kelly_fraction / volatility. Stop-loss 1.5% trailing, take-p
 - Trade log with `reason` + MCP payload
 
 
+## 🚀 Deploy (Vercel — dashboard + live endpoint)
+
+The deployed artifact is the **static dashboard** (`index.html`) plus the
+**`/api/sentiment`** Python function:
+
+1. Push this repo to GitHub (already public).
+2. In Vercel: **Add New → Project** → import `sentinel-agent`. No build
+   command needed — Vercel auto-detects the Python function in `api/`.
+3. Deploy. You get:
+   - `https://<app>.vercel.app/` → Sentinel dashboard
+   - `https://<app>.vercel.app/api/sentiment` → live paper-mode sentiment JSON
+
+Notes:
+- The Streamlit dashboard (`streamlit run dashboard/app.py`) is **local/dev
+  only** — Vercel can't host long-running apps. The static page is what
+  judges see.
+- `api/sentiment.py` is stdlib-only on purpose and uses Vercel's documented
+  `handler` (BaseHTTPRequestHandler) form. Vercel's build pipeline prefers
+  `pyproject.toml` (zero deps) over `requirements.txt`, and
+  `vercel.json` excludes heavy folders from the function bundle — deploys
+  are fast and small. Local deps come from `requirements.txt`.
+- Vercel runs in US regions where Binance returns 451, so the endpoint
+  serves the paper snapshot. Full live data flows through Agent OS MCP on
+  the agent itself (run locally or on a non-restricted host).
+
 ## 🧪 Tests & Reliability
 ```bash
-pytest -q
-python -m src.mcp_client.test_precision  # LOT_SIZE normalizer
-python -m src.strategy.test_risk        # cap/slippage/daily loss
+pytest -q                                  # unit tests (risk engine + sentiment)
+python -m src.mcp_client.demo --show-payload  # 4 pillars + MCP payload
+python -m src.agent --panic-close           # emergency stop (cancels open orders)
 ```
 
 ##  Project Structure
 ```
 sentinel-agent/
+├── api/
+│   └── sentiment.py            # Vercel /api/sentiment (stdlib-only)
 ├── src/
 │   ├── agent.py                # Orchestrator (the AI agent)
 │   ├── mcp_client/
-│   │   ├── binance_mcp.py      # Agent OS MCP client
-│   │   └── mock_binance.py     # Paper trading simulator
+│   │   ├── binance_mcp.py      # Agent OS MCP client (+ paper fallback, panic-close)
+│   │   ├── binance_connector_example.py  # Official SDK example
+│   │   └── demo.py             # 4-pillar demo
 │   ├── sentiment/
-│   │   ├── news_fetcher.py
-│   │   ├── analyzer.py         # Gemini + VADER
+│   │   ├── news_fetcher.py     # CryptoPanic / RSS / mock
+│   │   ├── analyzer.py         # Gemini → Groq → VADER cascade
 │   │   └── aggregator.py
 │   └── strategy/
 │       ├── indicators.py       # RSI/MACD/BB
@@ -210,12 +238,14 @@ sentinel-agent/
 │       ├── risk_manager.py     # 4 pillars
 │       └── backtest.py
 ├── dashboard/
-│   └── app.py                  # Streamlit
+│   └── app.py                  # Streamlit (local/dev)
+├── index.html                  # Deployed static dashboard (Vercel)
 ├── demo/
 │   ├── DEMO_SCRIPT.md
 │   └── video_checklist.md
-├── requirements.txt
+├── requirements.txt            # local/dev deps (Vercel keeps bundle tiny)
 ├── .env.example
+├── vercel.json
 └── README.md
 ```
 

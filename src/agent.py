@@ -153,6 +153,7 @@ async def main():
     parser.add_argument("--dry-run", action="store_true", default=True, help="Paper trade (default true)")
     parser.add_argument("--live", action="store_true", help="Live trade on Agentic sub-account (sets dry-run=false)")
     parser.add_argument("--mock-news", action="store_true", help="Use mock headlines (for offline demo)")
+    parser.add_argument("--panic-close", action="store_true", help="EMERGENCY: cancel all open orders and exit")
     args = parser.parse_args()
 
     dry_run = not args.live
@@ -164,6 +165,12 @@ async def main():
     console.print(Panel.fit("🤖 SENTINEL — Binance Agent OS Sentiment Trader\nTrack A: AI Agent with Agent OS | MCP: https://agent.binance.com/mcp/agentic", style="bold magenta"))
     console.print(f"Mode: {'🔴 LIVE' if not dry_run else '🟢 PAPER (Dry-Run)'} | Interval: {args.interval}s | Coins: {args.coins}")
     console.print("Using Official SDKs: binance-connector-python + MCP Streamable HTTP\n")
+
+    if args.panic_close:
+        async with SentinelAgent(coins=args.coins, dry_run=dry_run) as agent:
+            res = await agent.mcp.cancel_all_orders()
+            console.print(Panel(f"🚨 PANIC CLOSE — {res.get('status')}: {res.get('msg', res)}", style="bold red"))
+        return
 
     async with SentinelAgent(coins=args.coins, dry_run=dry_run) as agent:
         if args.continuous:
@@ -182,5 +189,10 @@ async def main():
                     t.add_row(tr["time"], tr["coin"], f"[{color}]{tr['action']}[/{color}]", str(tr["qty"]), f"${tr['notional']}", tr["status"])
                 console.print(t)
 
-if __name__ == "__main__":
+def cli():
+    """Console entry point (see [project.scripts] in pyproject.toml)."""
     asyncio.run(main())
+
+
+if __name__ == "__main__":
+    cli()

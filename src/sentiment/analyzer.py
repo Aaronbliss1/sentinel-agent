@@ -10,9 +10,9 @@ from dotenv import load_dotenv
 load_dotenv()
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 
-# Keyword boosters
-BULLISH_TRIGGERS = ["etf inflow", "accumulation", "ath", "upgrade", "burn", "grant", "adoption", "buy", "surge", "hits new high", "expands", "reduces fees"]
-BEARISH_TRIGGERS = ["hack", "sell pressure", "delay", "sec", "lawsuit", "investigate", "fud", "dump", "leverage overextended", "repayments", "fears"]
+# Keyword boosters (calibrated against VADER compounds of typical headlines)
+BULLISH_TRIGGERS = ["inflow", "etf", "accumulation", "ath", "upgrade", "burn", "grant", "adoption", "buy", "buys", "surge", "hits new high", "expands", "reduces fees", "record", "largest"]
+BEARISH_TRIGGERS = ["hack", "sell pressure", "outflow", "delay", "sec", "lawsuit", "investigate", "fud", "dump", "leverage overextended", "repayments", "fears"]
 
 _vader = SentimentIntensityAnalyzer()
 

@@ -2,35 +2,18 @@
 name = "sentinel-agent"
 version = "0.1.0"
 description = "Sentinel — Binance Agent OS Sentiment Trader (Hackathon Track A)"
-authors = [{name="Sentinel Team"}]
+authors = [{name = "Aaronbliss"}]
 readme = "README.md"
 requires-python = ">=3.10"
-dependencies = [
-  "python-dotenv",
-  "httpx",
-  "mcp",
-  "vaderSentiment",
-  "feedparser",
-  "requests",
-  "google-generativeai",
-  "groq",
-  "openai",
-  "pandas",
-  "numpy",
-  "ta",
-  "streamlit",
-  "plotly",
-  "rich",
-  "typer",
-  "pytest",
-  "binance-connector"
-]
+# NOTE: intentionally empty. Vercel's build pipeline (uv) prefers
+# pyproject.toml over requirements.txt, so this keeps the /api/sentiment
+# serverless bundle minimal. All local/dev dependencies live in
+# requirements.txt:  pip install -r requirements.txt
+dependencies = []
 
 [project.scripts]
-sentinel = "src.agent:main"
+sentinel = "src.agent:cli"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-
-[tool.vercel]
-entrypoint = "api.sentiment:handler"
+pythonpath = ["."]

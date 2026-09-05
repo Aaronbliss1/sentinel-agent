@@ -179,7 +179,7 @@ with b2:
 st.divider()
 st.markdown("### 🏆 Hackathon Submission")
 colA, colB, colC = st.columns(3)
-colA.markdown("**GitHub**\n\n`github.com/yourhandle/sentinel-agent`")
+colA.markdown("**GitHub**\n\n`github.com/Aaronbliss1/sentinel-agent`")
 colB.markdown("**Demo Video**\n\n2-min walkthrough (see `demo/DEMO_SCRIPT.md`)")
 colC.markdown("**Survey**\n\nBinance Hackathon form + tweet reply")
 st.caption("Built with binance-connector-python • MCP Streamable HTTP • Streamlit • Gemini Free • VADER • Lagos, Sep 2026")

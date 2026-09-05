@@ -1,9 +1,15 @@
 {
+  "$schema": "https://openapi.vercel.sh/vercel.json",
   "rewrites": [{ "source": "/", "destination": "/dashboard.html" }],
   "headers": [
     {
       "source": "/dashboard.html",
       "headers": [{ "key": "Cache-Control", "value": "public, max-age=0, must-revalidate" }]
     }
-  ]
+  ],
+  "functions": {
+    "api/**/*.py": {
+      "excludeFiles": "{src/**,dashboard/**,tests/**,demo/**,.venv/**,**/__pycache__/**,**/*.pyc,*.html}"
+    }
+  }
 }
