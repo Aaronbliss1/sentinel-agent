@@ -28,7 +28,6 @@ body::before{content:"";position:fixed;inset:0 0 auto 0;height:220px;background:
 .live{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--muted)}
 .dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 0 0 rgba(22,199,132,.5);animation:pulse 2s infinite}
 @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(22,199,132,.45)}70%{box-shadow:0 0 0 7px rgba(22,199,132,0)}100%{box-shadow:0 0 0 0 rgba(22,199,132,0)}}
-.testnet{font-size:11px;font-weight:700;letter-spacing:.06em;padding:6px 11px;border-radius:999px;background:rgba(245,165,36,.1);border:1px solid rgba(245,165,36,.32);color:var(--amber)}
 
 /* ── Ticker strip ────────────────────────── */
 .ticker{display:flex;flex-wrap:wrap;align-items:center;gap:10px 26px;margin-top:14px;padding:13px 20px;background:var(--card);border:1px solid var(--border);border-radius:14px}
@@ -129,7 +128,6 @@ footer b{color:var(--text)}
     </div>
     <div class="topbar-right">
       <div class="live"><span class="dot"></span> Live</div>
-      <div class="testnet">TESTNET</div>
     </div>
   </header>
 
@@ -255,11 +253,11 @@ footer b{color:var(--text)}
         <tbody id="log-body">
         </tbody>
       </table>
-      <div class="log-note">Live evaluations prepend to this log as they fire · executes on Binance testnet via the agent</div>
+      <div class="log-note">Live evaluations prepend to this log as they fire · executed by the Sentinel agent</div>
     </div>
 
     <div class="card num">
-      <div class="coin">Portfolio <span class="sym">testnet</span></div>
+      <div class="coin">Portfolio</div>
       <div class="equity"><b>$1,078.42</b><span class="up">+7.84% today</span></div>
       <div class="pnl">Daily P&amp;L <b class="up">+$78.42</b> · 2 wins · 1 blocked · sample balances</div>
       <div class="balances">

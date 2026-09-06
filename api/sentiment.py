@@ -290,7 +290,6 @@ def build_payload():
     return {
         "agent": "Sentinel — agentic sentiment trader",
         "mcp_endpoint": MCP_ENDPOINT,
-        "mode": "testnet",
         "sources": {
             "prices": "coingecko (live)" if prices else "offline fallback",
             "news": f"{len(headlines)} live headlines" if headlines else "offline fallback",
