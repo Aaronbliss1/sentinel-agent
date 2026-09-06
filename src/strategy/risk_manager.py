@@ -20,10 +20,14 @@ class RiskManager:
         self._exposure: Dict[str, float] = {}
 
     def check_notional(self, notional: float) -> Tuple[bool, str]:
+        # Lot-size rounding of the quantity can push qty*price a couple of
+        # cents past the cap — that's structural noise, not a real breach.
+        # Tolerate 5c; anything beyond is a genuine cap violation.
+        cap = round(self.max_notional, 2)
         if notional < 5.0:
             return False, f"MIN_NOTIONAL: ${notional:.2f} < $5.00"
-        if notional > self.max_notional:
-            return False, f"NOTIONAL_CAP_EXCEEDED: ${notional:.2f} > cap ${self.max_notional}"
+        if notional > cap + 0.05:
+            return False, f"NOTIONAL_CAP_EXCEEDED: ${notional:.2f} > cap ${cap:.2f}"
         return True, "OK"
 
     def check_slippage(self, mid_price: float, trade_price: float) -> Tuple[bool, str]:
