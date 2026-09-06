@@ -24,6 +24,9 @@ load_dotenv()
 BINANCE_REST = "https://api.binance.com"
 MCP_ENDPOINT = os.getenv("BINANCE_MCP_ENDPOINT", "https://agent.binance.com/mcp/agentic")
 
+# CoinGecko fallback (same market, reachable where Binance geo-blocks)
+COINGECKO_IDS = {"BTCUSDT": "bitcoin", "BNBUSDT": "binancecoin", "ETHUSDT": "ethereum"}
+
 # Mock exchange filters for BTC/BNB/ETH (real ones fetched via /api/v3/exchangeInfo)
 EXCHANGE_FILTERS = {
     "BTCUSDT": {"stepSize": "0.00001000", "tickSize": "0.01000000", "minNotional": "5.00"},
@@ -109,17 +112,59 @@ class BinanceMCPClient:
             j = r.json()
             if "price" in j:
                 return float(j["price"])
-            # Binance restricted location response
-            print(f"[MCP] Binance restricted, using mock price for {symbol}")
-            return mocks.get(symbol, 100.0) + (hash(symbol) % 100 - 50) * 0.1
+            print(f"[MCP] Binance restricted/451, trying CoinGecko for {symbol}")
         except Exception as e:
             print(f"[MCP] get_price error {symbol}: {e}")
-            return mocks.get(symbol, 100.0)
+        try:
+            gid = COINGECKO_IDS[symbol]
+            r = await self.client.get(f"https://api.coingecko.com/api/v3/simple/price",
+                                      params={"ids": gid, "vs_currencies": "usd"})
+            if r.status_code == 200:
+                return float(r.json()[gid]["usd"])
+        except Exception as e:
+            print(f"[MCP] CoinGecko fallback failed for {symbol}: {e}")
+        print(f"[MCP] using mock price for {symbol}")
+        return mocks.get(symbol, 100.0) + (hash(symbol) % 100 - 50) * 0.1
 
-    def _mock_klines(self, symbol: str, limit: int = 100):
+    async def _coingecko_klines(self, symbol: str, interval: str, limit: int) -> List[List]:
+        """Kline fallback via CoinGecko market_chart (5m points for days=1,
+        hourly points for days>1)."""
+        gid = COINGECKO_IDS.get(symbol)
+        if not gid:
+            return self._mock_klines(symbol, limit)
+        mins = {"1m": 1, "5m": 5, "15m": 15, "30m": 30, "1h": 60, "4h": 240, "1d": 1440}.get(interval, 15)
+        days = 1 if mins <= 15 else max(1, min(90, limit))
+        r = await self.client.get(
+            f"https://api.coingecko.com/api/v3/coins/{gid}/market_chart",
+            params={"vs_currency": "usd", "days": days})
+        if r.status_code != 200:
+            return self._mock_klines(symbol, limit)
+        points = r.json().get("prices") or []
+        if len(points) < 4:
+            return self._mock_klines(symbol, limit)
+        step_ms = mins * 60 * 1000
+        buckets: Dict[int, Dict[str, float]] = {}
+        for ts, p in points:
+            b = int(ts // step_ms)
+            c = buckets.get(b)
+            if c is None:
+                buckets[b] = {"o": p, "h": p, "l": p, "c": p}
+            else:
+                c["h"] = max(c["h"], p)
+                c["l"] = min(c["l"], p)
+                c["c"] = p
+        out = []
+        for b, c in list(buckets.items())[-limit:]:
+            out.append([b * step_ms, f"{c['o']:.2f}", f"{c['h']:.2f}", f"{c['l']:.2f}",
+                        f"{c['c']:.2f}", "0", b * step_ms + step_ms, "0", 0, "0", "0", "0"])
+        return out
+
+    def _mock_klines(self, symbol: str, limit: int = 100, base_price: float = None):
         import random, time
         mocks = {"BTCUSDT": 65234.5, "BNBUSDT": 612.3, "ETHUSDT": 2650.8}
-        base = mocks.get(symbol, 50000)
+        # Prefer the freshest live price we can get so the fallback candles
+        # sit at the real market level (never stale constants).
+        base = base_price or mocks.get(symbol, 50000)
         klines = []
         now = int(time.time() * 1000)
         price = base
@@ -154,11 +199,23 @@ class BinanceMCPClient:
             j = r.json()
             if isinstance(j, list) and len(j) > 0 and isinstance(j[0], list):
                 return j
-            print(f"[MCP] Klines restricted, using mock klines for {symbol}")
-            return self._mock_klines(symbol, limit)
+            print(f"[MCP] Klines restricted/451, trying CoinGecko for {symbol}")
         except Exception as e:
             print(f"[MCP] get_klines error {symbol}: {e}")
-            return self._mock_klines(symbol, limit)
+        try:
+            cg = await self._coingecko_klines(symbol, interval, limit)
+            if cg:
+                return cg
+            print(f"[MCP] CoinGecko klines empty for {symbol} (rate limit?)")
+        except Exception as e:
+            print(f"[MCP] CoinGecko klines failed: {e}")
+        try:
+            live_price = await self.get_price(symbol)
+        except Exception:
+            live_price = None
+        if live_price and 1 < live_price < 1e9:
+            return self._mock_klines(symbol, limit, base_price=live_price)
+        return self._mock_klines(symbol, limit)
 
     async def get_24hr_ticker(self, symbol: str) -> dict:
         try:
@@ -174,7 +231,12 @@ class BinanceMCPClient:
 
     async def get_account_balance(self) -> dict:
         if not self.api_key or self.dry_run:
-            # paper account
+            if self.dry_run:
+                mode = "PAPER (Dry-Run)"
+            elif self.testnet:
+                mode = "TESTNET (paper balance — set testnet keys to trade)"
+            else:
+                mode = "LIVE (paper balance — no API keys set)"
             return {
                 "balances": [
                     {"asset": "USDT", "free": "1000.00", "locked": "0.00"},
@@ -182,13 +244,24 @@ class BinanceMCPClient:
                     {"asset": "BNB", "free": "1.5", "locked": "0.00"},
                     {"asset": "ETH", "free": "0.35", "locked": "0.00"},
                 ],
-                "mode": "PAPER (Dry-Run via MCP)" if self.dry_run else "LIVE Agentic Sub-Account",
+                "mode": mode,
                 "mcp_endpoint": self.mcp_endpoint
             }
         params = {"timestamp": self._timestamp()}
         self._sign(params)
-        r = await self.client.get(f"{self.base_url}/api/v3/account", params=params, headers={"X-MBX-APIKEY": self.api_key})
-        return r.json()
+        try:
+            r = await self.client.get(f"{self.base_url}/api/v3/account", params=params, headers={"X-MBX-APIKEY": self.api_key})
+            j = r.json()
+            if isinstance(j, dict) and "balances" in j:
+                return j
+        except Exception as e:
+            print(f"[MCP] account fetch failed ({e}) — using paper balance")
+        return {
+            "balances": [{"asset": "USDT", "free": "1000.00", "locked": "0.00"}],
+            "mode": ("TESTNET unreachable from this network" if self.testnet
+                     else "LIVE Agentic Sub-Account") + " (paper balance)",
+            "mcp_endpoint": self.mcp_endpoint,
+        }
 
     # ============ Trading (via MCP place_order) ============
     async def place_order(self, symbol: str, side: str, quantity: float, price: Optional[float] = None,
@@ -280,13 +353,30 @@ class BinanceMCPClient:
             params["price"] = self.normalize_price(symbol, price)
             params["timeInForce"] = "GTC"
         self._sign(params)
-        r = await self.client.post(f"{self.base_url}/api/v3/order", params=params, headers={"X-MBX-APIKEY": self.api_key})
+        where = "Binance testnet" if self.testnet else "Binance"
+        try:
+            r = await self.client.post(f"{self.base_url}/api/v3/order", params=params, headers={"X-MBX-APIKEY": self.api_key})
+        except Exception as e:
+            return {"status": "NETWORK_ERROR", "clientOrderId": cid, "mcp_payload": mcp_payload, "msg": f"Order request failed: {e}"}
         # Handle rate limit backoff
         if r.status_code == 429 or r.status_code == 418:
             print(f"[MCP] Rate limit hit ({r.status_code}), backing off 5s...")
             await asyncio.sleep(5)
             return {"status": "RATE_LIMITED", "retry_after": 5}
-        data = r.json()
+        if r.status_code == 451:
+            return {
+                "status": "GEO_BLOCKED",
+                "clientOrderId": cid,
+                "mcp_payload": mcp_payload,
+                "msg": f"{where} is geo-blocked from this network (HTTP 451) — run the agent from a non-restricted location",
+            }
+        try:
+            data = r.json()
+        except Exception:
+            return {"status": f"HTTP_{r.status_code}", "clientOrderId": cid, "mcp_payload": mcp_payload,
+                    "msg": f"Unparseable response from {where}: {r.text[:120]}"}
+        if not isinstance(data, dict) or not ("orderId" in data or "orderUid" in data or "code" in data):
+            return {"status": f"HTTP_{r.status_code}", "clientOrderId": cid, "mcp_payload": mcp_payload, "msg": str(data)[:200]}
         data["mcp_payload"] = mcp_payload
         return data
 

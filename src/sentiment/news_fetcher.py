@@ -62,12 +62,11 @@ class NewsFetcher:
         self.client = httpx.Client(timeout=10)
 
     def _classify(self, title: str) -> List[str]:
+        # No default tag: unrelated coins (XRP, Tether, ...) must not pollute
+        # BTC/BNB/ETH sentiment.
         title_l = title.lower()
-        coins = []
-        for coin, pats in COIN_KEYWORDS.items():
-            if any(re.search(p, title_l) for p in pats):
-                coins.append(coin)
-        return coins or ["BTC"]  # default tag
+        return [coin for coin, pats in COIN_KEYWORDS.items()
+                if any(re.search(p, title_l) for p in pats)]
 
     def fetch_cryptopanic(self, limit: int = 10) -> List[Dict]:
         if not self.key:
@@ -145,11 +144,11 @@ class NewsFetcher:
         if not items:
             print("[News] No live news, using mock headlines for demo resilience")
             items = self.fetch_mock(coins)
-        # Filter to requested coins if provided
+        # Filter to requested coins if provided. (If live news exists but
+        # nothing matches a coin, we return what matched — possibly empty —
+        # instead of silently swapping in mock headlines.)
         if coins:
             items = [x for x in items if any(c in x["coins"] for c in coins)]
-            if not items:
-                items = self.fetch_mock(coins)
         # Add age_mins
         for it in items:
             if "age_mins" not in it:

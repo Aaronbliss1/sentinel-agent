@@ -98,9 +98,10 @@ def _age_mins(pub_date: str) -> int:
 
 
 def _classify(title: str):
+    # No default tag: unrelated coins (XRP, Tether, ...) must not pollute
+    # BTC/BNB/ETH sentiment.
     t = title.lower()
-    coins = [c for c, pats in COIN_KEYWORDS.items() if any(re.search(p, t) for p in pats)]
-    return coins or ["BTC"]
+    return [c for c, pats in COIN_KEYWORDS.items() if any(re.search(p, t) for p in pats)]
 
 
 # ---------------- data sources ------------------------------------------
