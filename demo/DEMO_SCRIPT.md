@@ -1,75 +1,73 @@
 # 🎬 Sentinel — Demo Video Script (2:00) — Track A
 
-**Goal:** Show judges an **AI agent with Binance Agent OS** that **trades BTC/BNB/ETH based on news sentiment** — via MCP, with risk, explainable.
+**Goal:** Show judges an **AI agent on Binance Agent OS** that **trades BTC/BNB/ETH from live news sentiment** — real data, real testnet execution, explainable signals.
 
 **Record with:** Screen + voiceover. Keep to 120 seconds.
+
+**The two panels you'll have open:**
+1. **Terminal** — `python -m src.agent --continuous --testnet` (live cycles every 2 min)
+2. **Vercel dashboard** — your deployed URL (live prices every 15s, sentiment + headlines every 60s, candlestick chart, signal, event log)
 
 ---
 
 ### 0:00-0:15 — Hook (Problem)
-> "Crypto moves on NEWS faster than charts. By the time you read 'BlackRock ETF +$500M', BTC is already +3%. I'm building Sentinel — an AI agent on **Binance Agent OS** that *reads the news, scores sentiment, and trades* — before the candle closes."
+> "Crypto moves on NEWS faster than charts. By the time you read 'BlackRock ETF +$500M', BTC is already +3%. This is Sentinel — an AI agent on **Binance Agent OS** that *reads the news, scores it, and trades* — before the candle closes."
 
-Show: README + Binance Agent OS page (agent.binance.com/mcp/agentic)
+Show: GitHub repo front page + Binance Agent OS (agent.binance.com)
 
 ### 0:15-0:35 — Setup (Agent OS in 15s)
-> "Sentinel connects via the **official MCP Endpoint** `https://agent.binance.com/mcp/agentic` using **Streamable HTTP**. It trades inside an **Agentic virtual sub-account** — isolated, no withdrawals ever, confirm-before-execute. One command: `claude mcp add binance-mcp-server --transport http https://agent.binance.com/mcp/agentic`"
+> "Sentinel speaks to Binance the official way — **binance-connector-python** over **MCP Streamable HTTP** (`https://agent.binance.com/mcp/agentic`), executing on the **Binance Spot Testnet** with my real test account. One command to run it:"
 
-Show: Terminal running `claude mcp add ...` + Binance Sub-account Asset Management → Transfer (fund with $100)
+Show: terminal typing `python -m src.agent --continuous --testnet` → banner:
+`Mode: 🔵 TESTNET (testnet.binance.vision) | Coins: BTC, BNB, ETH`
 
-### 0:35-0:70 — Live Workflow (THE CORE 35s)
-> "Watch one full agentic cycle. Every 2 minutes: **(1) fetch news** → **(2) LLM sentiment 0-100** → **(3) confirm with RSI/MACD/Bollinger** → **(4) risk gate** → **(5) MCP place_order**."
+### 0:35-1:10 — Live Workflow (THE CORE 35s)
+Narrate as the real cycle scrolls:
+- "**(1) Live news** — 3 fresh headlines from CoinDesk and Cointelegraph, filtered per coin"
+- "**(2) Gemini scores each 0–100** in one batch call — 'Bitcoin below 80K' → 25 BEARISH, 'Double Three rally' → 78 BULLISH"
+- "**(3) My real testnet account** — $10,000 USDT on testnet"
+- "**(4) Technicals confirm** — RSI, MACD, Bollinger, trend per coin"
+- "**(5) The signal, with its reasoning** — 'BUY ETH: sentiment 78 + RSI 60 + MACD bullish' … or the safety pillar catching it: 'RSI 78 overbought — HOLD, don't chase'"
+- "**(6) Order executed on testnet** — see it filled"
 
-Run: `python -m src.agent --once --mock-news` (or live news)
+Show: terminal logs. If a fill happens, cut to **testnet.binance.vision → My Orders** showing the filled order.
 
-Narrate as logs scroll:
-- "3 headlines: BlackRock ETF inflow… Score 78/100 BULLISH via Gemini"
-- "BNB burn → 71 bullish, ETH neutral 52"
-- "BTC technicals: RSI 62, MACD bullish, trend up"
-- "Signal: BUY BTC with 0.85 confidence — Reason: sentiment 78 + RSI 62 + MACD bullish"
-- "Risk: APPROVED, notional $65 < cap $100, slippage 2bps"
-- "MCP DRY-RUN: BUY 0.001 BTCUSDT @ $65,234 — payload shows SHA-256 clientOrderId"
+### 1:10-1:35 — Dashboard (Polish)
+> "Every decision is explainable — and live. The dashboard pulls real prices every 15 seconds, real headlines scored by Gemini, a live candlestick chart, and the current signal with its reason. No mock data anywhere."
 
-Show: Terminal logs + `mcp_payload` JSON highlighted
+Show: Vercel dashboard — prices ticking, sentiment gauges, chart, event log appending.
 
-### 0:70-1:30 — Dashboard (Polish)
-> "Every trade is explainable. Dashboard shows sentiment tape, 0-100 gauges, kline with BUY markers, portfolio, and trade log with *reason* — not just price."
+### 1:35-1:50 — Safety Pillars (Judges love this)
+> "Four institutional pillars: **idempotency** — SHA-256 client order IDs, no double-fills. **Precision** — Decimal LOT_SIZE. **Risk engine** — position cap + slippage guard. And the **confluence filter** — a BULLISH headline alone never trades; watch it block an overbought RSI 78 in real time. It degrades gracefully too: geo-blocked networks get clean error states, not crashes."
 
-Show: `streamlit run dashboard/app.py` → walk through:
-- Sentiment gauges BTC 78 BUY, BNB 71 BUY, ETH 52 HOLD
-- Chart with BUY triangle
-- Trade log: BUY 0.001 BTC | DRY_RUN_EXECUTED | reason
+Show: quick flash of the RSI-block log line + `risk_manager.py`
 
-### 1:30-1:50 — Safety Pillars (Judges love this)
-> "Four institutional pillars: **Idempotency** (SHA-256 no double-fill), **Precision** (Decimal LOT_SIZE), **Risk Engine** (cap + slippage + daily loss kill), **Clock Sync** (+ backoff for 429/418). It blocked a 0.05 BTC $3,250 trade — cap $100. And RSI 74 blocked chasing."
+### 1:50-2:00 — Close + CTA
+> "Testnet today, mainnet is one env var away. Official stack: **binance-connector-python + MCP + Gemini free tier**. Built for the Binance Agent OS Mini Hackathon — Track A. GitHub and survey in the description. **Sentinel: don't just read the news — trade it.**"
 
-Show: Quick code flash of `risk_manager.py` + blocked log
-
-### 1:50-2:00 — Close + Call to Action
-> "Paper → Live in one env var: `BINANCE_DRY_RUN=false`. Official stack: **binance-connector-python + MCP + Streamlit + free Gemini/VADER**. For the $60K Binance Agent OS Mini Hackathon — Track A. GitHub + survey in description. **Sentinel: Don't just read the news — trade it.**"
-
-Show: GitHub repo + QR to https://binance.com/agent-os + tweet reply screenshot.
+Show: GitHub repo + agent.binance.com
 
 ---
 
 ## Checklist Before Recording
+- [ ] `.env` in place (testnet keys + Gemini key) — **never show the .env file on screen**
+- [ ] `python -m src.agent --continuous --testnet` running, at least 1 clean cycle visible
+- [ ] Vercel dashboard open on your phone/browser — prices visibly ticking ("updated Xs ago" counter)
+- [ ] testnet.binance.vision open in a 3rd tab (for the "My Orders" proof shot)
+- [ ] OBS 1080p, mic check, ~5 min of buffer (you can cut to 2:00 in edit)
+- [ ] If a fill happens: zoom on the order line + My Orders page
 
-- [ ] `.env` has `BINANCE_DRY_RUN=true` (safe)
-- [ ] `pip install -r requirements.txt`
-- [ ] Test: `python -m src.agent --once --mock-news` succeeds
-- [ ] Test: `streamlit run dashboard/app.py` opens
-- [ ] Fund Agentic sub-account with $50-100 for LIVE snippet (optional)
-- [ ] OBS 1080p, mic check, hide API keys
-- [ ] Keep to 1:55-2:05
+## If no order fills before recording
+Record the **terminal cycle + dashboard** anyway (it's the strongest 60% of the video), then keep the agent running in the background; if a fill lands, record a 10-second insert of the terminal + My Orders page.
 
 ## YouTube Title / Description
 
 **Title:** Sentinel — AI Sentiment Trader on Binance Agent OS | MCP Agentic Trading for BTC/BNB/ETH (Hackathon Track A)
 
 **Description:**
-Sentinel is an autonomous AI agent built on Binance Agent OS (MCP: https://agent.binance.com/mcp/agentic) that trades BTC, BNB, ETH based on market news sentiment.
-News → Gemini/VADER sentiment 0-100 → RSI/MACD/Bollinger confluence → Risk Gate → MCP place_order inside Agentic virtual sub-account.
-Paper → Live in 1 env var. Built for Binance Agent OS Mini Hackathon ($60K, Track A $20K, Sep 4-8 2026).
+Sentinel is an autonomous AI agent built on Binance Agent OS (MCP: https://agent.binance.com/mcp/agentic) that trades BTC, BNB, ETH from live market news sentiment.
+Live RSS news → Gemini sentiment 0–100 → RSI/MACD/Bollinger confluence → Risk Gate → order execution on Binance Spot Testnet with my real test account.
+Testnet → mainnet in 1 env var. Built for the Binance Agent OS Mini Hackathon ($60K, Track A $20K, Sep 4–8 2026).
 GitHub: https://github.com/Aaronbliss1/sentinel-agent
-Stack: binance-connector-python, MCP Streamable HTTP, Gemini Free, Streamlit.
-Demo: dry-run trading, explainable reasons, 4-pillar safety.
+Stack: binance-connector-python, MCP Streamable HTTP, Gemini free tier, live Vercel dashboard.
 #Binance #AgentOS #MCP #Hackathon #AI #Trading
