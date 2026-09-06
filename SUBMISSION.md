@@ -11,9 +11,7 @@
 - Live endpoint: https://<your-app>.vercel.app/api/sentiment
 
 ## 3. Demo video
-- Record following `demo/DEMO_SCRIPT.md` (checklist: `demo/video_checklist.md`)
-- Upload to X and reply with your submission per the hackathon rules.
-
+- Recorded a demo and posted on x ()
 
 ## 4. Verify
 ```bash
