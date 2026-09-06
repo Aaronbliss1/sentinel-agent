@@ -253,6 +253,8 @@ class BinanceMCPClient:
             r = await self.client.get(f"{self.base_url}/api/v3/account", params=params, headers={"X-MBX-APIKEY": self.api_key})
             j = r.json()
             if isinstance(j, dict) and "balances" in j:
+                j["mode"] = "TESTNET" if self.testnet else "LIVE (Agentic Sub-Account)"
+                j.setdefault("mcp_endpoint", self.mcp_endpoint)
                 return j
         except Exception as e:
             print(f"[MCP] account fetch failed ({e}) — using paper balance")
