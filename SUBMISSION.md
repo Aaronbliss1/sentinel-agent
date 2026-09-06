@@ -14,7 +14,8 @@
 - Record following `demo/DEMO_SCRIPT.md` (checklist: `demo/video_checklist.md`)
 - Upload to X and reply with your submission per the hackathon rules.
 
-## 4. Verify before submitting
+
+## 4. Verify
 ```bash
 pip install -r requirements.txt
 cp .env.example .env      # optional — works without any keys (paper + VADER)
@@ -26,6 +27,4 @@ python -m src.agent --once --mock-news     # full agentic cycle
 streamlit run dashboard/app.py             # live dashboard on :8501
 ```
 
-## 5. Submit
-- Complete the Binance survey
-- Attach: GitHub repo link + demo video link (Tweet reply, per rules)
+
