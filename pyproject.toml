@@ -5,11 +5,14 @@ description = "Sentinel — Binance Agent OS Sentiment Trader (Hackathon Track A
 authors = [{name = "Aaronbliss"}]
 readme = "README.md"
 requires-python = ">=3.10"
-# NOTE: intentionally empty. Vercel's build pipeline (uv) prefers
-# pyproject.toml over requirements.txt, so this keeps the /api/sentiment
-# serverless bundle minimal. All local/dev dependencies live in
-# requirements.txt:  pip install -r requirements.txt
-dependencies = []
+# NOTE: Vercel's build pipeline (uv) prefers pyproject.toml over
+# requirements.txt — so only the ONE dependency the /api/sentiment
+# function actually imports is listed here (small, pure-python).
+# All local/dev dependencies live in requirements.txt:
+#   pip install -r requirements.txt
+dependencies = [
+  "vaderSentiment",
+]
 
 [project.scripts]
 sentinel = "src.agent:cli"

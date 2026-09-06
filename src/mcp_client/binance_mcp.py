@@ -258,7 +258,16 @@ class BinanceMCPClient:
                 "msg": "Paper trade — set BINANCE_DRY_RUN=false to go live on Agentic sub-account"
             }
 
-        # LIVE path (requires Agentic sub-account keys)
+        # LIVE path (testnet or mainnet — requires API keys)
+        if not self.api_key or not self.api_secret:
+            where = "Binance TESTNET (free keys at https://testnet.binance.vision)" if self.testnet else "mainnet"
+            return {
+                "status": "KEYS_REQUIRED",
+                "clientOrderId": cid,
+                "mcp_payload": mcp_payload,
+                "msg": f"No API keys set for {where} execution — put BINANCE_API_KEY/BINANCE_API_SECRET in .env"
+                       + ("" if self.testnet else " (or use --testnet / paper mode)"),
+            }
         params = {
             "symbol": symbol,
             "side": side,

@@ -6,6 +6,7 @@ Sources:
 - Mock headlines for offline demo
 """
 import os
+import re
 import time
 import random
 import httpx
@@ -48,10 +49,11 @@ MOCK_HEADLINES = {
     ]
 }
 
+# Word-boundary patterns for short tokens (so "Tether" doesn't match "eth")
 COIN_KEYWORDS = {
-    "BTC": ["bitcoin", "btc", "saylor", "etf", "blackrock"],
-    "BNB": ["bnb", "binance", "bsc", "pancakeswap", "opbnb"],
-    "ETH": ["ethereum", "eth", "vitalik", "staking", "eip", "l2"],
+    "BTC": [r"bitcoin", r"\bbtc\b", r"saylor", r"\betf\b", r"blackrock"],
+    "BNB": [r"\bbnb\b", r"binance", r"\bbcs\b", r"pancakeswap", r"opbnb"],
+    "ETH": [r"ethereum", r"\beth\b", r"\bether\b", r"vitalik", r"staking", r"\beip\d*", r"\bl2s?\b"],
 }
 
 class NewsFetcher:
@@ -62,8 +64,8 @@ class NewsFetcher:
     def _classify(self, title: str) -> List[str]:
         title_l = title.lower()
         coins = []
-        for coin, kws in COIN_KEYWORDS.items():
-            if any(k in title_l for k in kws):
+        for coin, pats in COIN_KEYWORDS.items():
+            if any(re.search(p, title_l) for p in pats):
                 coins.append(coin)
         return coins or ["BTC"]  # default tag
 

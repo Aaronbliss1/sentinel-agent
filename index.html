@@ -28,7 +28,7 @@ body::before{content:"";position:fixed;inset:0 0 auto 0;height:220px;background:
 .live{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--muted)}
 .dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 0 0 rgba(22,199,132,.5);animation:pulse 2s infinite}
 @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(22,199,132,.45)}70%{box-shadow:0 0 0 7px rgba(22,199,132,0)}100%{box-shadow:0 0 0 0 rgba(22,199,132,0)}}
-.paper{font-size:11px;font-weight:700;letter-spacing:.06em;padding:6px 11px;border-radius:999px;background:rgba(22,199,132,.1);border:1px solid rgba(22,199,132,.3);color:var(--green)}
+.testnet{font-size:11px;font-weight:700;letter-spacing:.06em;padding:6px 11px;border-radius:999px;background:rgba(245,165,36,.1);border:1px solid rgba(245,165,36,.32);color:var(--amber)}
 
 /* ── Ticker strip ────────────────────────── */
 .ticker{display:flex;flex-wrap:wrap;align-items:center;gap:10px 26px;margin-top:14px;padding:13px 20px;background:var(--card);border:1px solid var(--border);border-radius:14px}
@@ -60,9 +60,9 @@ body::before{content:"";position:fixed;inset:0 0 auto 0;height:220px;background:
 .score{font-size:30px;font-weight:800;letter-spacing:-.02em}
 .score-max{font-size:13px;color:var(--faint);margin-right:8px}
 .gauge{flex:1;height:6px;background:var(--card2);border-radius:999px;overflow:hidden}
-.gauge span{display:block;height:100%;border-radius:999px}
+.gauge span{display:block;height:100%;border-radius:999px;transition:width .6s ease}
 .conf{font-size:12px;color:var(--muted)}
-blockquote{margin-top:11px;padding:10px 12px;background:var(--card2);border:1px solid var(--border);border-left:2px solid var(--gold);border-radius:10px;font-size:12.5px;color:#C9D1DE}
+blockquote{margin-top:11px;padding:10px 12px;background:var(--card2);border:1px solid var(--border);border-left:2px solid var(--gold);border-radius:10px;font-size:12.5px;color:#C9D1DE;min-height:3.4em}
 .model{margin-top:10px;font-size:11.5px;color:var(--faint)}
 
 /* ── Chart ───────────────────────────────── */
@@ -73,30 +73,28 @@ svg text{font-family:inherit}
 .chart-cap{margin-top:8px;font-size:11.5px;color:var(--faint)}
 
 /* ── Signal card ─────────────────────────── */
-.big-signal{font-size:34px;font-weight:800;letter-spacing:-.02em;color:var(--green);margin-top:12px}
+.big-signal{font-size:34px;font-weight:800;letter-spacing:-.02em;margin-top:12px}
 .big-signal span{font-size:16px;font-weight:600;color:var(--muted);margin-left:6px}
 .kv-line{font-size:12.5px;color:var(--muted);margin-top:4px}
-.reason{margin-top:13px;padding:12px 13px;background:var(--card2);border:1px solid var(--border);border-radius:11px;font-size:12.5px;line-height:1.6;color:#C9D1DE}
+.reason{margin-top:13px;padding:12px 13px;background:var(--card2);border:1px solid var(--border);border-radius:11px;font-size:12.5px;line-height:1.6;color:#C9D1DE;min-height:3.6em}
 .reason b{color:var(--text)}
 .chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px}
 .chip{font-size:11px;font-weight:600;padding:5px 9px;border-radius:8px;background:var(--card2);border:1px solid var(--border);color:var(--muted)}
 .chip.ok{color:var(--green);border-color:rgba(22,199,132,.3)}
 .chip.run{color:var(--gold);border-color:rgba(240,185,11,.3)}
-details.payload{margin-top:13px}
-details.payload summary{cursor:pointer;font-size:12px;color:var(--faint);user-select:none}
-details.payload summary:hover{color:var(--muted)}
-pre{margin-top:9px;padding:11px 12px;background:var(--card2);border:1px solid var(--border);border-radius:10px;font-size:10.5px;line-height:1.55;overflow:auto;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#AAB4C5}
 
 /* ── Trade log ───────────────────────────── */
 table{width:100%;border-collapse:collapse;margin-top:12px;font-size:12.5px}
 th{font-size:10.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--faint);text-align:left;padding:7px 8px;border-bottom:1px solid var(--border)}
 td{padding:10px 8px;border-bottom:1px solid rgba(255,255,255,.05)}
 tr:last-child td{border-bottom:none}
-.st{font-size:10.5px;font-weight:700;padding:3px 8px;border-radius:999px}
+.st{font-size:10.5px;font-weight:700;padding:3px 8px;border-radius:999px;white-space:nowrap}
 .st.ok{background:rgba(22,199,132,.12);color:var(--green)}
 .st.hold{background:rgba(138,147,166,.12);color:var(--muted)}
 .st.block{background:rgba(245,165,36,.12);color:var(--amber)}
+.st.live{background:rgba(240,185,11,.12);color:var(--gold)}
 .log-note{margin-top:10px;font-size:11px;color:var(--faint)}
+.holdc{color:var(--amber);font-weight:700}
 
 /* ── Portfolio ───────────────────────────── */
 .equity{margin-top:12px;display:flex;align-items:baseline;gap:10px}
@@ -115,8 +113,6 @@ tr:last-child td{border-bottom:none}
 /* ── Footer ──────────────────────────────── */
 footer{margin-top:26px;padding:16px 20px;background:var(--card);border:1px solid var(--border);border-radius:14px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;font-size:12.5px;color:var(--muted)}
 footer b{color:var(--text)}
-.foot-right{display:flex;align-items:center;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--faint)}
-.foot-right .sep{width:1px;height:14px;background:var(--border2)}
 
 @media(max-width:1020px){.row2{grid-template-columns:1fr}}
 @media(max-width:860px){.grid3{grid-template-columns:1fr}.tk.meta{margin-left:0}}
@@ -132,171 +128,140 @@ footer b{color:var(--text)}
       <div class="tag">Agentic sentiment trader</div>
     </div>
     <div class="topbar-right">
-      <div class="live"><span class="dot"></span> Live · next cycle in 2 min</div>
-      <div class="paper">PAPER TRADING</div>
+      <div class="live"><span class="dot"></span> Live</div>
+      <div class="testnet">TESTNET</div>
     </div>
   </header>
 
   <!-- Ticker strip -->
   <section class="ticker num">
-    <div class="tk"><span class="tk-name">BTC</span><b>$65,234.50</b><span class="up">+1.84%</span></div>
-    <div class="tk"><span class="tk-name">BNB</span><b>$612.30</b><span class="up">+0.92%</span></div>
-    <div class="tk"><span class="tk-name">ETH</span><b>$2,650.80</b><span class="dn">−0.31%</span></div>
-    <div class="tk meta">Sep 5, 2026 · 2-min cycle</div>
+    <div class="tk"><span class="tk-name">BTC</span><b id="tk-price-BTC">$79,904.00</b><span class="up" id="tk-chg-BTC">+0.34%</span></div>
+    <div class="tk"><span class="tk-name">BNB</span><b id="tk-price-BNB">$768.28</b><span class="up" id="tk-chg-BNB">+6.63%</span></div>
+    <div class="tk"><span class="tk-name">ETH</span><b id="tk-price-ETH">$2,481.53</b><span class="up" id="tk-chg-ETH">+0.42%</span></div>
+    <div class="tk meta"><span id="updated-at">connecting to live data…</span></div>
   </section>
 
   <!-- Sentiment -->
-  <div class="section-label">Sentiment — news scored 0–100</div>
+  <div class="section-label">Sentiment — live news, scored 0–100</div>
   <section class="grid3">
     <div class="card num">
       <div class="card-top">
         <div>
-          <div class="coin">Bitcoin<span class="sym">BTC/USDT</span></div>
-          <div class="price-row"><span class="price">$65,234.50</span><span class="up">+1.84% 24h</span></div>
+          <div class="coin">Bitcoin<span class="sym">BTC/USD</span></div>
+          <div class="price-row"><span class="price" id="card-price-BTC">$79,904.00</span><span class="up" id="card-chg-BTC">+0.34% 24h</span></div>
         </div>
-        <span class="signal buy">BUY</span>
+        <span class="signal hold" id="sigchip-BTC">HOLD</span>
       </div>
       <div class="score-line">
-        <span class="score" style="color:var(--green)">78</span><span class="score-max">/100</span>
-        <div class="gauge"><span style="width:78%;background:var(--green)"></span></div>
+        <span class="score" id="score-BTC" style="color:var(--amber)">52</span><span class="score-max">/100</span>
+        <div class="gauge"><span id="gauge-BTC" style="width:52%;background:var(--amber)"></span></div>
       </div>
-      <div class="conf">Confidence 85% · 3 headlines · 2m ago</div>
-      <blockquote>“BlackRock Bitcoin ETF sees $520M inflow, largest in 3 months”</blockquote>
-      <div class="model">LLM-scored · RSI 62 · MACD bullish · Risk: approved</div>
+      <div class="conf" id="conf-BTC">Waiting for live headlines…</div>
+      <blockquote id="quote-BTC">Live headlines load in a few seconds.</blockquote>
+      <div class="model" id="model-BTC">scoring with VADER + crypto lexicon</div>
     </div>
 
     <div class="card num">
       <div class="card-top">
         <div>
-          <div class="coin">BNB<span class="sym">BNB/USDT</span></div>
-          <div class="price-row"><span class="price">$612.30</span><span class="up">+0.92% 24h</span></div>
+          <div class="coin">BNB<span class="sym">BNB/USD</span></div>
+          <div class="price-row"><span class="price" id="card-price-BNB">$768.28</span><span class="up" id="card-chg-BNB">+6.63% 24h</span></div>
         </div>
-        <span class="signal buy">BUY</span>
+        <span class="signal hold" id="sigchip-BNB">HOLD</span>
       </div>
       <div class="score-line">
-        <span class="score" style="color:var(--green)">71</span><span class="score-max">/100</span>
-        <div class="gauge"><span style="width:71%;background:var(--green)"></span></div>
+        <span class="score" id="score-BNB" style="color:var(--amber)">52</span><span class="score-max">/100</span>
+        <div class="gauge"><span id="gauge-BNB" style="width:52%;background:var(--amber)"></span></div>
       </div>
-      <div class="conf">Confidence 67% · 2 headlines · 5m ago</div>
-      <blockquote>“BNB Chain burns 1.2M BNB, supply reduction bullish”</blockquote>
-      <div class="model">Keyword-scored · Trend up · RSI 58 · Notional $73.47</div>
+      <div class="conf" id="conf-BNB">Waiting for live headlines…</div>
+      <blockquote id="quote-BNB">Live headlines load in a few seconds.</blockquote>
+      <div class="model" id="model-BNB">scoring with VADER + crypto lexicon</div>
     </div>
 
     <div class="card num">
       <div class="card-top">
         <div>
-          <div class="coin">Ethereum<span class="sym">ETH/USDT</span></div>
-          <div class="price-row"><span class="price">$2,650.80</span><span class="dn">−0.31% 24h</span></div>
+          <div class="coin">Ethereum<span class="sym">ETH/USD</span></div>
+          <div class="price-row"><span class="price" id="card-price-ETH">$2,481.53</span><span class="up" id="card-chg-ETH">+0.42% 24h</span></div>
         </div>
-        <span class="signal hold">HOLD</span>
+        <span class="signal hold" id="sigchip-ETH">HOLD</span>
       </div>
       <div class="score-line">
-        <span class="score" style="color:var(--amber)">52</span><span class="score-max">/100</span>
-        <div class="gauge"><span style="width:52%;background:var(--amber)"></span></div>
+        <span class="score" id="score-ETH" style="color:var(--amber)">52</span><span class="score-max">/100</span>
+        <div class="gauge"><span id="gauge-ETH" style="width:52%;background:var(--amber)"></span></div>
       </div>
-      <div class="conf">Confidence 41% · 2 headlines · 8m ago</div>
-      <blockquote>“Dencun upgrade cuts fees 40%” vs “SEC probes ETH staking” — net neutral</blockquote>
-      <div class="model">Mixed signals · RSI 54 · Trend neutral · No edge</div>
+      <div class="conf" id="conf-ETH">Waiting for live headlines…</div>
+      <blockquote id="quote-ETH">Live headlines load in a few seconds.</blockquote>
+      <div class="model" id="model-ETH">scoring with VADER + crypto lexicon</div>
     </div>
   </section>
 
   <!-- Chart + latest signal -->
   <section class="row2">
-    <div class="card">
+    <div class="card num">
       <div class="chart-head">
-        <h3 class="num">BTC/USDT · 15m</h3>
-        <span class="tech num">RSI 62 · MACD bullish · BB neutral · Trend up</span>
+        <h3>BTC/USD · 15m</h3>
+        <span class="tech" id="chart-tech">Live candles · loading…</span>
       </div>
       <svg viewBox="0 0 720 220" width="100%" height="220" style="margin-top:12px;background:var(--card2);border:1px solid var(--border);border-radius:12px">
         <defs>
           <linearGradient id="area" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stop-color="#F0B90B" stop-opacity="0.16"/>
+            <stop offset="0%" stop-color="#F0B90B" stop-opacity="0.14"/>
             <stop offset="100%" stop-color="#F0B90B" stop-opacity="0"/>
           </linearGradient>
         </defs>
         <g stroke="#1B2130" stroke-width="1" opacity="0.7">
-          <line x1="40" y1="30" x2="700" y2="30"/><line x1="40" y1="70" x2="700" y2="70"/>
-          <line x1="40" y1="110" x2="700" y2="110"/><line x1="40" y1="150" x2="700" y2="150"/>
-          <line x1="40" y1="190" x2="700" y2="190"/>
+          <line x1="40" y1="25" x2="700" y2="25"/><line x1="40" y1="70" x2="700" y2="70"/>
+          <line x1="40" y1="115" x2="700" y2="115"/><line x1="40" y1="160" x2="700" y2="160"/>
+          <line x1="40" y1="200" x2="700" y2="200"/>
         </g>
-        <polygon fill="url(#area)" points="40,150 80,140 120,145 160,120 200,115 240,95 280,100 320,85 360,70 400,90 440,75 480,60 520,65 560,45 600,55 640,35 680,40 680,205 40,205"/>
-        <polyline fill="none" stroke="#F0B90B" stroke-width="2.2" stroke-linejoin="round" points="40,150 80,140 120,145 160,120 200,115 240,95 280,100 320,85 360,70 400,90 440,75 480,60 520,65 560,45 600,55 640,35 680,40"/>
-        <g fill="#16C784" opacity="0.85">
-          <rect x="236" y="95" width="8" height="18" rx="2"/><rect x="356" y="70" width="8" height="22" rx="2"/><rect x="556" y="45" width="8" height="20" rx="2"/>
+        <polygon id="areaPoly" fill="url(#area)" points="40,150 80,140 120,145 160,120 200,115 240,95 280,100 320,85 360,70 400,90 440,75 480,60 520,65 560,45 600,55 640,35 680,40 700,200 40,200"/>
+        <g id="candles">
+          <rect x="236" y="95" width="6" height="18" rx="1" fill="#16C784" opacity="0.9"/>
+          <rect x="356" y="70" width="6" height="22" rx="1" fill="#16C784" opacity="0.9"/>
+          <rect x="396" y="75" width="6" height="18" rx="1" fill="#EA3943" opacity="0.9"/>
+          <rect x="516" y="60" width="6" height="16" rx="1" fill="#EA3943" opacity="0.9"/>
+          <rect x="556" y="45" width="6" height="20" rx="1" fill="#16C784" opacity="0.9"/>
         </g>
-        <g fill="#EA3943" opacity="0.9">
-          <rect x="396" y="75" width="8" height="18" rx="2"/><rect x="516" y="60" width="8" height="16" rx="2"/>
-        </g>
-        <g>
-          <polygon points="240,78 231,91 249,91" fill="#16C784" stroke="#0D1016" stroke-width="1.5"/>
-          <text x="240" y="72" text-anchor="middle" font-size="10" font-weight="700" fill="#16C784">BUY 78</text>
-          <polygon points="360,52 351,65 369,65" fill="#16C784" stroke="#0D1016" stroke-width="1.5"/>
-          <text x="360" y="46" text-anchor="middle" font-size="10" font-weight="700" fill="#16C784">BUY 84</text>
-          <polygon points="560,27 551,40 569,40" fill="#16C784" stroke="#0D1016" stroke-width="1.5"/>
-          <text x="560" y="21" text-anchor="middle" font-size="10" font-weight="700" fill="#16C784">BUY 71</text>
-        </g>
-        <text x="40" y="212" font-size="9.5" fill="#5C6577">$64,200 — $66,400 · 80 candles</text>
-        <text x="700" y="212" font-size="9.5" fill="#5C6577" text-anchor="end">00:00   04:00   08:00   12:00   16:00   NOW</text>
+        <polyline id="closeLine" fill="none" stroke="#F0B90B" stroke-width="2" stroke-linejoin="round" points="40,150 80,140 120,145 160,120 200,115 240,95 280,100 320,85 360,70 400,90 440,75 480,60 520,65 560,45 600,55 640,35 680,40"/>
+        <text id="axis-hi" x="44" y="20" font-size="9.5" fill="#5C6577">—</text>
+        <text id="axis-lo" x="44" y="214" font-size="9.5" fill="#5C6577">—</text>
+        <text id="candle-count" x="700" y="214" font-size="9.5" fill="#5C6577" text-anchor="end">— candles</text>
       </svg>
-      <div class="chart-cap">▲ buys fired on sentiment + technical confluence · RSI filter blocked one overbought chase (RSI 76)</div>
+      <div class="chart-cap">Live 15m candles · entries require sentiment + technical confluence</div>
     </div>
 
     <div class="card num">
       <div class="card-top">
         <div class="coin">Latest signal</div>
-        <span class="signal buy">EXECUTED</span>
+        <span class="signal hold" id="sig-state">STANDBY</span>
       </div>
-      <div class="big-signal">BUY<span>BTC/USDT</span></div>
-      <div class="kv-line">Market · 0.001 BTC · notional $65.23 · confidence 0.85</div>
-      <div class="reason">
-        <b>Why:</b> sentiment <b style="color:var(--green)">78/100</b> (3 bullish headlines) + RSI 62 + MACD bullish + trend up. ETF inflow narrative with whale accumulation backing it.
+      <div class="big-signal" id="sig-action" style="color:var(--amber)">WAIT<span id="sig-coin">BTC/USDT</span></div>
+      <div class="kv-line" id="sig-sub">Evaluating live market + news every minute.</div>
+      <div class="reason" id="sig-reason"><b>Why:</b> the agent scores live headlines and fuses them with price action. The strongest current signal appears here as it fires.</div>
+      <div class="chips" id="sig-chips">
+        <span class="chip">live scoring</span>
+        <span class="chip">buy ≥ 70 · sell ≤ 30</span>
       </div>
-      <div class="chips">
-        <span class="chip ok">Risk approved</span>
-        <span class="chip">$65.23 &lt; $100 cap</span>
-        <span class="chip">2.1 bps slippage</span>
-        <span class="chip run">Paper fill · id mcp_a1b2c3</span>
-      </div>
-      <details class="payload">
-        <summary>Order payload (via MCP)</summary>
-        <pre>{
-  "jsonrpc": "2.0",
-  "method": "tools/call",
-  "params": {
-    "name": "place_order",
-    "arguments": {
-      "symbol": "BTCUSDT",
-      "side": "BUY",
-      "type": "MARKET",
-      "quantity": "0.001",
-      "clientOrderId": "mcp_a1b2c3",
-      "reason": "BTC sentiment 78 + RSI 62"
-    }
-  }
-}</pre>
-      </details>
     </div>
   </section>
 
-  <!-- Trade log + portfolio -->
+  <!-- Signal log + portfolio -->
   <section class="row2">
     <div class="card num">
-      <div class="coin">Trade log</div>
+      <div class="coin">Signal log</div>
       <table>
         <tr><th>Time</th><th>Coin</th><th>Side</th><th>Qty</th><th>Price</th><th>Notional</th><th>Sent.</th><th>Status</th></tr>
-        <tr><td>01:39:32</td><td>BNB</td><td class="up">BUY</td><td>0.0200</td><td>$617.20</td><td>$12.34</td><td>71</td><td><span class="st ok">Filled</span></td></tr>
-        <tr><td>01:38:05</td><td>ETH</td><td style="color:var(--amber);font-weight:700">HOLD</td><td>—</td><td>$2,650</td><td>—</td><td>52</td><td><span class="st hold">Hold</span></td></tr>
-        <tr><td>01:37:11</td><td>BTC</td><td class="up">BUY</td><td>0.0010</td><td>$65,234</td><td>$65.23</td><td>78</td><td><span class="st ok">Filled</span></td></tr>
-        <tr><td>01:35:10</td><td>BTC</td><td style="color:var(--amber);font-weight:700">HOLD</td><td>—</td><td>$64,980</td><td>—</td><td>64</td><td><span class="st block">Blocked · RSI 76</span></td></tr>
-        <tr><td>01:33:02</td><td>BTC</td><td class="dn">SELL</td><td>0.0005</td><td>$65,100</td><td>$32.55</td><td>28</td><td><span class="st ok">Filled</span></td></tr>
+        <tbody id="log-body">
+        </tbody>
       </table>
-      <div class="log-note">Every order is idempotent (SHA-256 client order ID) — retries can never double-fill.</div>
+      <div class="log-note">Live evaluations prepend to this log as they fire · executes on Binance testnet via the agent</div>
     </div>
 
     <div class="card num">
-      <div class="coin">Portfolio <span class="sym">paper</span></div>
+      <div class="coin">Portfolio <span class="sym">testnet</span></div>
       <div class="equity"><b>$1,078.42</b><span class="up">+7.84% today</span></div>
-      <div class="pnl">Daily P&amp;L <b class="up">+$78.42</b> · 2 wins · 1 blocked</div>
+      <div class="pnl">Daily P&amp;L <b class="up">+$78.42</b> · 2 wins · 1 blocked · sample balances</div>
       <div class="balances">
         <div class="bal"><div class="l">USDT</div><b>$861.30</b></div>
         <div class="bal"><div class="l">BTC</div><b>0.013</b><div class="s">$848</div></div>
@@ -315,13 +280,165 @@ footer b{color:var(--text)}
 
   <footer>
     <div><b>Sentinel</b> — agentic sentiment trading for BTC, BNB &amp; ETH.</div>
-    <div class="foot-right">
-      <span>Powered by <b>Binance Agent OS</b> · MCP Streamable HTTP</span>
-      <span class="sep"></span>
-      <span>Paper mode — no real funds at risk</span>
-    </div>
+    <div class="foot-right" style="font-size:12px;color:var(--faint)">Powered by Binance Agent OS</div>
   </footer>
 
 </div>
+
+<script>
+(function(){
+  "use strict";
+  if (typeof fetch !== "function") return;
+  function $(id){ return document.getElementById(id); }
+  function fmt(n, d){ d = (d == null ? 2 : d); return Number(n).toLocaleString("en-US",{minimumFractionDigits:d, maximumFractionDigits:d}); }
+  function chgTxt(ch){ return (ch >= 0 ? "+" : "−") + Math.abs(ch).toFixed(2) + "%"; }
+  function chgCls(el, ch){ el.className = ch >= 0 ? "up" : "dn"; }
+
+  function setPrice(coin, p, ch){
+    var tp = $("tk-price-" + coin), tc = $("tk-chg-" + coin);
+    if (tp) tp.textContent = "$" + fmt(p);
+    if (tc && ch != null){ tc.textContent = chgTxt(ch); chgCls(tc, ch); }
+    var cp = $("card-price-" + coin), cc = $("card-chg-" + coin);
+    if (cp) cp.textContent = "$" + fmt(p);
+    if (cc && ch != null){ cc.textContent = chgTxt(ch) + " 24h"; chgCls(cc, ch); }
+  }
+
+  /* Prices: straight from CoinGecko (CORS open) every 15s */
+  function tickPrices(){
+    fetch("https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,binancecoin,ethereum&vs_currencies=usd&include_24hr_change=true")
+      .then(function(r){ return r.ok ? r.json() : null; })
+      .then(function(j){
+        if (!j) return;
+        if (j.bitcoin)     setPrice("BTC", j.bitcoin.usd, j.bitcoin.usd_24h_change);
+        if (j.binancecoin) setPrice("BNB", j.binancecoin.usd, j.binancecoin.usd_24h_change);
+        if (j.ethereum)    setPrice("ETH", j.ethereum.usd, j.ethereum.usd_24h_change);
+      })
+      .catch(function(){});
+  }
+
+  /* Chart: real 15m candles */
+  function drawCandles(candles){
+    var g = $("candles");
+    if (!g || !candles || candles.length < 2) return;
+    var L = 40, R = 700, T = 25, B = 200, lo = Infinity, hi = -Infinity, i, c;
+    for (i = 0; i < candles.length; i++){ c = candles[i]; if (c[3] < lo) lo = c[3]; if (c[2] > hi) hi = c[2]; }
+    var span = (hi - lo) || 1;
+    function x(idx){ return L + (R - L) * idx / (candles.length - 1); }
+    function y(v){ return B - (B - T) * (v - lo) / span; }
+    var w = Math.max(3, Math.min(9, (R - L) / candles.length * 0.55));
+    var out = "", line = "";
+    for (i = 0; i < candles.length; i++){
+      c = candles[i];
+      var col = c[4] >= c[1] ? "#16C784" : "#EA3943";
+      out += '<line x1="' + x(i).toFixed(1) + '" y1="' + y(c[2]).toFixed(1) + '" x2="' + x(i).toFixed(1) + '" y2="' + y(c[3]).toFixed(1) + '" stroke="' + col + '" stroke-width="1" opacity="0.75"/>';
+      var top = y(Math.max(c[1], c[4])), hgt = Math.max(2, Math.abs(y(c[1]) - y(c[4])));
+      out += '<rect x="' + (x(i) - w / 2).toFixed(1) + '" y="' + top.toFixed(1) + '" width="' + w.toFixed(1) + '" height="' + hgt.toFixed(1) + '" rx="1" fill="' + col + '" opacity="0.9"/>';
+      line += (i ? " " : "") + x(i).toFixed(1) + "," + y(c[4]).toFixed(1);
+    }
+    g.innerHTML = out;
+    $("closeLine").setAttribute("points", line);
+    $("areaPoly").setAttribute("points", L + "," + B + " " + line + " " + R + "," + B);
+    $("axis-hi").textContent = "$" + fmt(hi, 0);
+    $("axis-lo").textContent = "$" + fmt(lo, 0);
+    $("candle-count").textContent = candles.length + " live candles";
+    var tech = $("chart-tech");
+    if (tech){
+      var last = candles[candles.length - 1], first = candles[0];
+      var rng = (last[4] - first[1]) / first[1] * 100;
+      tech.textContent = "$" + fmt(last[4]) + " now · " + chgTxt(rng) + " over window";
+    }
+  }
+
+  /* Latest signal from live coin scores */
+  function renderSignal(coins){
+    var best = null, k;
+    for (k = 0; k < 3; k++){
+      var coin = ["BTC","BNB","ETH"][k], c = coins[coin];
+      if (!c) continue;
+      if (!best || Math.abs(c.score - 50) > Math.abs(best.c.score - 50)) best = { coin: coin, c: c };
+    }
+    if (!best) return;
+    var c = best.c;
+    var col = c.signal === "BUY" ? "var(--green)" : c.signal === "SELL" ? "var(--red)" : "var(--amber)";
+    var act = $("sig-action");
+    act.innerHTML = c.signal + '<span>' + best.coin + '/USDT</span>';
+    act.style.color = col;
+    var state = $("sig-state");
+    state.textContent = c.signal === "HOLD" ? "WATCHING" : "ACTIVE";
+    state.className = "signal " + (c.signal === "BUY" ? "buy" : c.signal === "SELL" ? "sell" : "hold");
+    $("sig-sub").textContent = "Sentiment " + c.score + "/100 · " + c.count + " headline" + (c.count === 1 ? "" : "s") + " · confidence " + Math.round((c.confidence || 0) * 100) + "% · live price $" + fmt(c.price);
+    if (c.top_headline) $("sig-reason").innerHTML = "<b>Top driver:</b> " + c.top_headline.replace(/</g, "&lt;");
+    var chips = $("sig-chips");
+    if (chips){
+      chips.innerHTML = '<span class="chip ' + (c.signal === "HOLD" ? "" : "ok") + '">live signal</span>' +
+        '<span class="chip">score ' + c.score + '/100</span>' +
+        '<span class="chip">via ' + (c.model || "live scoring") + "</span>";
+    }
+    appendLog(best.coin, c);
+  }
+
+  function appendLog(coin, c){
+    var tb = $("log-body");
+    if (!tb) return;
+    var tr = document.createElement("tr");
+    var t = new Date().toLocaleTimeString("en-GB", { hour12: false });
+    var cls = c.signal === "BUY" ? "up" : c.signal === "SELL" ? "dn" : "holdc";
+    tr.innerHTML = "<td>" + t + '</td><td>' + coin + '</td><td class="' + cls + '">' + c.signal + "</td><td>—</td><td>$" +
+      fmt(c.price) + "</td><td>—</td><td>" + c.score + '</td><td><span class="st live">Live</span></td>';
+    tb.insertBefore(tr, tb.firstChild);
+    while (tb.children.length > 8) tb.removeChild(tb.lastChild);
+  }
+
+  /* Sentiment + chart: our endpoint (server scores live RSS headlines) */
+  var lastUpdate = 0;
+  function tickSentiment(){
+    fetch("/api/sentiment")
+      .then(function(r){ return r.ok ? r.json() : null; })
+      .then(function(d){
+        if (!d || !d.coins) return;
+        var k, c;
+        for (k = 0; k < 3; k++){
+          var coin = ["BTC","BNB","ETH"][k];
+          c = d.coins[coin];
+          if (!c) continue;
+          setPrice(coin, c.price, c.change_24h);
+          var sc = $("score-" + coin);
+          if (sc){
+            sc.textContent = c.score;
+            sc.style.color = c.signal === "BUY" ? "var(--green)" : c.signal === "SELL" ? "var(--red)" : "var(--amber)";
+          }
+          var sg = $("sigchip-" + coin);
+          if (sg){ sg.textContent = c.signal; sg.className = "signal " + (c.signal === "BUY" ? "buy" : c.signal === "SELL" ? "sell" : "hold"); }
+          var ga = $("gauge-" + coin);
+          if (ga){ ga.style.width = c.score + "%"; ga.style.background = c.signal === "BUY" ? "var(--green)" : c.signal === "SELL" ? "var(--red)" : "var(--amber)"; }
+          var cf = $("conf-" + coin);
+          if (cf) cf.textContent = "Confidence " + Math.round((c.confidence || 0) * 100) + "% · " + c.count + " headline" + (c.count === 1 ? "" : "s") + " · live";
+          var q = $("quote-" + coin);
+          if (q && c.top_headline) q.textContent = "“" + c.top_headline + "”";
+          var md = $("model-" + coin);
+          if (md) md.textContent = "via " + (c.model || "live scoring") + " · refreshed every minute";
+        }
+        if (d.chart && d.chart.candles && d.chart.candles.length) drawCandles(d.chart.candles);
+        renderSignal(d.coins);
+        lastUpdate = Date.now();
+      })
+      .catch(function(){});
+  }
+
+  function tickAgo(){
+    var el = $("updated-at");
+    if (!el) return;
+    if (!lastUpdate){ el.textContent = "connecting to live data…"; return; }
+    var s = Math.max(0, Math.round((Date.now() - lastUpdate) / 1000));
+    el.textContent = "updated " + s + "s ago";
+  }
+
+  setInterval(tickPrices, 15000);
+  setInterval(tickSentiment, 60000);
+  setInterval(tickAgo, 1000);
+  tickPrices();
+  tickSentiment();
+})();
+</script>
 </body>
 </html>

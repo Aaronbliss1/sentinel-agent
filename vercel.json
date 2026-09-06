@@ -9,6 +9,7 @@
   ],
   "functions": {
     "api/**/*.py": {
+      "maxDuration": 30,
       "excludeFiles": "{src/**,dashboard/**,tests/**,demo/**,.venv/**,**/__pycache__/**,**/*.pyc}"
     }
   }

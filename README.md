@@ -108,8 +108,13 @@ GOOGLE_API_KEY=your_gemini_free_key  # optional, falls back to VADER
 
 ### 3. Run Agent (Headless Workflow)
 ```bash
-python -m src.agent --coins BTC BNB ETH --interval 120 --once --dry-run
-# or continuous:
+# Paper mode (no orders placed at all):
+python -m src.agent --once --mock-news
+
+# TESTNET trading (free testnet keys from https://testnet.binance.vision):
+python -m src.agent --continuous --testnet
+
+# Continuous live loop:
 python -m src.agent --continuous
 ```
 
@@ -201,14 +206,21 @@ Notes:
 - The Streamlit dashboard (`streamlit run dashboard/app.py`) is **local/dev
   only** — Vercel can't host long-running apps. The static page is what
   judges see.
-- `api/sentiment.py` is stdlib-only on purpose and uses Vercel's documented
-  `handler` (BaseHTTPRequestHandler) form. Vercel's build pipeline prefers
-  `pyproject.toml` (zero deps) over `requirements.txt`, and
-  `vercel.json` excludes heavy folders from the function bundle — deploys
-  are fast and small. Local deps come from `requirements.txt`.
-- Vercel runs in US regions where Binance returns 451, so the endpoint
-  serves the paper snapshot. Full live data flows through Agent OS MCP on
-  the agent itself (run locally or on a non-restricted host).
+- **The deployed dashboard is live:** prices stream from CoinGecko
+  (browser, every 15s) and `/api/sentiment` scores **live RSS headlines**
+  (Cointelegraph/CoinDesk/Cryptonews) every minute.
+- Vercel runs in US regions where `api.binance.com` *and*
+  `testnet.binance.vision` return 451 — so the function serves
+  CoinGecko prices (same market) and **never trades**. Execution happens
+  in the Python agent, which runs from a non-US location and places real
+  **testnet** orders (`python -m src.agent --continuous --testnet`).
+- `api/sentiment.py` imports only stdlib + `vaderSentiment` (the single
+  dep in `pyproject.toml`, which Vercel's build pipeline prefers over
+  `requirements.txt`). `vercel.json` excludes heavy folders from the
+  function bundle — deploys stay fast and small.
+- **Optional Vercel env var:** `GOOGLE_API_KEY` — when set, the function
+  scores headlines with one batched Gemini call (gemini-flash-lite)
+  instead of VADER. Nothing else needed.
 
 ## 🧪 Tests & Reliability
 ```bash

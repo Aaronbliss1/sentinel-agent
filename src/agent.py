@@ -32,16 +32,17 @@ from src.strategy.risk_manager import RiskManager
 SYMBOLS = {"BTC": "BTCUSDT", "BNB": "BNBUSDT", "ETH": "ETHUSDT"}
 
 class SentinelAgent:
-    def __init__(self, coins: List[str] = None, dry_run: bool = True):
+    def __init__(self, coins: List[str] = None, dry_run: bool = True, testnet: bool = False):
         self.coins = coins or ["BTC","BNB","ETH"]
         self.dry_run = dry_run
+        self.testnet = testnet
         self.fetcher = NewsFetcher()
         self.risk = RiskManager()
         self.mcp = None
         self.trade_log = []
 
     async def __aenter__(self):
-        self.mcp = BinanceMCPClient(dry_run=self.dry_run)
+        self.mcp = BinanceMCPClient(dry_run=self.dry_run, testnet=self.testnet)
         await self.mcp.__aenter__()
         return self
     async def __aexit__(self, *a):
@@ -57,7 +58,7 @@ class SentinelAgent:
         4. Fuse into signal
         5. Risk check + MCP place_order
         """
-        console.print(Panel(f"🔁 Sentinel Cycle — {time.strftime('%Y-%m-%d %H:%M:%S')} | DRY_RUN={self.dry_run} | Coins: {','.join(self.coins)}", style="bold cyan"))
+        console.print(Panel(f"🔁 Sentinel Cycle — {time.strftime('%Y-%m-%d %H:%M:%S')} | DRY_RUN={self.dry_run} | TESTNET={self.testnet} | Coins: {','.join(self.coins)}", style="bold cyan"))
 
         # 1. News
         console.print("[1/5] 📰 Fetching news...")
@@ -153,26 +154,29 @@ async def main():
     parser.add_argument("--dry-run", action="store_true", default=True, help="Paper trade (default true)")
     parser.add_argument("--live", action="store_true", help="Live trade on Agentic sub-account (sets dry-run=false)")
     parser.add_argument("--mock-news", action="store_true", help="Use mock headlines (for offline demo)")
+    parser.add_argument("--testnet", action="store_true", help="Route data + orders to Binance TESTNET (testnet.binance.vision)")
     parser.add_argument("--panic-close", action="store_true", help="EMERGENCY: cancel all open orders and exit")
     args = parser.parse_args()
 
-    dry_run = not args.live
+    testnet = args.testnet or os.getenv("BINANCE_TESTNET", "false").lower() == "true"
+    dry_run = not args.live and not testnet
     if os.getenv("BINANCE_DRY_RUN", "true").lower() == "false":
         dry_run = False
     if args.live:
         dry_run = False
 
-    console.print(Panel.fit("🤖 SENTINEL — Binance Agent OS Sentiment Trader\nTrack A: AI Agent with Agent OS | MCP: https://agent.binance.com/mcp/agentic", style="bold magenta"))
-    console.print(f"Mode: {'🔴 LIVE' if not dry_run else '🟢 PAPER (Dry-Run)'} | Interval: {args.interval}s | Coins: {args.coins}")
+    console.print(Panel.fit("🤖 SENTINEL — Agentic Sentiment Trader\nMCP: https://agent.binance.com/mcp/agentic", style="bold magenta"))
+    mode_str = "🔵 TESTNET (testnet.binance.vision)" if testnet else ("🔴 LIVE" if not dry_run else "🟢 PAPER (Dry-Run)")
+    console.print(f"Mode: {mode_str} | Interval: {args.interval}s | Coins: {args.coins}")
     console.print("Using Official SDKs: binance-connector-python + MCP Streamable HTTP\n")
 
     if args.panic_close:
-        async with SentinelAgent(coins=args.coins, dry_run=dry_run) as agent:
+        async with SentinelAgent(coins=args.coins, dry_run=dry_run, testnet=testnet) as agent:
             res = await agent.mcp.cancel_all_orders()
             console.print(Panel(f"🚨 PANIC CLOSE — {res.get('status')}: {res.get('msg', res)}", style="bold red"))
         return
 
-    async with SentinelAgent(coins=args.coins, dry_run=dry_run) as agent:
+    async with SentinelAgent(coins=args.coins, dry_run=dry_run, testnet=testnet) as agent:
         if args.continuous:
             while True:
                 await agent.run_cycle(use_mock_news=args.mock_news)
