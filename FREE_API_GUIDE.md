@@ -103,17 +103,3 @@ claude mcp add binance-mcp-server --transport http https://agent.binance.com/mcp
 # Funds stay in Agentic Virtual Sub-Account (you fund manually $10-20 via UI)
 ```
 
-**For hackathon paper trading, you need $0 on Binance:**
-- Keep `BINANCE_DRY_RUN=true` in `.env` → Sentinel simulates trades via MCP payload, no real money, no sub-account funding needed. Judges love this safety.
-
-If you DO want to fund later (to go live):
-- Create Binance account → **Profile → Dashboard → Sub-account → Asset Management → Transfer** → move $10 USDT from main → Agentic sub-account.
-- Link: https://www.binance.com/en/my/sub-account/asset-management/transfer?asset=USDT
-
-
----
-
-### Questions?
-- Gemini not working? Try Groq (even faster free signup)
-- Want me to wire Hugging Face instead? I can swap analyzer to use it in 20 seconds.
-- Want to stay 100% offline? You're already ready — just record demo.

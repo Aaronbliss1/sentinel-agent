@@ -1,5 +1,5 @@
 # Sentinel — Binance Agent OS Sentiment Trader
-### 🏆 Submission for Binance Agent OS Mini Hackathon — Track A ($20K) | $60K Prize Pool
+### 🏆 Submission for Binance Agent OS Mini Hackathon — Track A ($20K)
 
 > **An autonomous AI agent that determines WHEN to buy/sell BTC, BNB, and ETH based on real-time market news & sentiment, executed via Binance Agent OS.**
 
@@ -8,7 +8,6 @@
 **MCP Endpoint:** `https://agent.binance.com/mcp/agentic` (Streamable HTTP)  
 **Deadline:** Sept 8, 2026 23:59 UTC  
 **Track:** A — Build an AI Agent with Agent OS  
-**Trading Mode:** Paper-Trading (Dry-Run) on Agentic Sub-Account — SAFE for demo, instant switch to live
 
 ---
 
@@ -43,10 +42,8 @@ Sentinel is an **agentic workflow** that fuses **3 signals** into 1 disciplined 
     - Zero-Float Precision (Decimal math, respects LOT_SIZE / TICK_SIZE)
     - Pre-Trade Risk Engine (cap, slippage, exposure)
     - Clock Sync + Backoff (protects against 1021/429)
-- ✅ **Free LLM First:** Gemini 2.0 Flash free tier + VADER fallback → works with $0 cost. Swappable to OpenAI/Claude/Groq in 1 line.
 - ✅ **Explainable Trades:** Every order includes `reason: "BTC sentiment 78/100 (3 bullish headlines) + RSI 62 + MACD bullish → BUY"` — judges can audit.
-- ✅ **Beautiful Live Dashboard:** Streamlit — sentiment feed, signal tape, portfolio, P&L, trade log. One command: `streamlit run dashboard/app.py`
-- ✅ **Paper → Live in 1 env var:** `BINANCE_DRY_RUN=true` → `false`
+- 
 
 ## Architecture
 ```
@@ -120,7 +117,6 @@ python -m src.agent --continuous
 
 ### 4. Run Live Dashboard
 ```bash
-streamlit run dashboard/app.py --server.port 8501 --server.address 0.0.0.0
 # Open http://localhost:8501
 ```
 
@@ -192,35 +188,21 @@ Position sizing via Kelly_fraction / volatility. Stop-loss 1.5% trailing, take-p
 
 ## 🚀 Deploy (Vercel — dashboard + live endpoint)
 
-The deployed artifact is the **static dashboard** (`index.html`) plus the
+The deployed artifact is the **dashboard** (`index.html`) plus the
 **`/api/sentiment`** Python function:
 
 1. Push this repo to GitHub (already public).
 2. In Vercel: **Add New → Project** → import `sentinel-agent`. No build
    command needed — Vercel auto-detects the Python function in `api/`.
 3. Deploy. You get:
-   - `https://<app>.vercel.app/` → Sentinel dashboard
-   - `https://<app>.vercel.app/api/sentiment` → live paper-mode sentiment JSON
+   - `https://<app>.vercel.app/` → Sentinel dashboard (live data)
+   - `https://<app>.vercel.app/api/sentiment` → live prices + scored headlines JSON
 
 Notes:
-- The Streamlit dashboard (`streamlit run dashboard/app.py`) is **local/dev
-  only** — Vercel can't host long-running apps. The static page is what
-  judges see.
-- **The deployed dashboard is live:** prices stream from CoinGecko
-  (browser, every 15s) and `/api/sentiment` scores **live RSS headlines**
-  (Cointelegraph/CoinDesk/Cryptonews) every minute.
-- Vercel runs in US regions where `api.binance.com` *and*
-  `testnet.binance.vision` return 451 — so the function serves
-  CoinGecko prices (same market) and **never trades**. Execution happens
-  in the Python agent, which runs from a non-US location and places real
-  **testnet** orders (`python -m src.agent --continuous --testnet`).
-- `api/sentiment.py` imports only stdlib + `vaderSentiment` (the single
-  dep in `pyproject.toml`, which Vercel's build pipeline prefers over
-  `requirements.txt`). `vercel.json` excludes heavy folders from the
-  function bundle — deploys stay fast and small.
-- **Optional Vercel env var:** `GOOGLE_API_KEY` — when set, the function
-  scores headlines with one batched Gemini call (gemini-flash-lite)
-  instead of VADER. Nothing else needed.
+- Prices come from CoinGecko (Binance 451s US servers, incl. testnet);
+  testnet **execution** runs in the Python agent from a non-US location.
+- Optional Vercel env var `GOOGLE_API_KEY` → headlines scored by Gemini
+  (batched) instead of VADER.
 
 ## 🧪 Tests & Reliability
 ```bash
