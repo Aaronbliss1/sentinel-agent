@@ -19,9 +19,9 @@ if not (key and secret):
     print("Set BINANCE_API_KEY / BINANCE_API_SECRET in .env first")
     sys.exit(1)
 
-from binance.connector.v3 import BinanceClient
+from binance.spot import Spot
 
-client = BinanceClient(key, secret, base_url="https://testnet.binance.vision")
+client = Spot(key, secret, base_url="https://testnet.binance.vision")
 
 print("=" * 52)
 print("  SENTINEL — TESTNET PROOF (testnet.binance.vision)")
@@ -29,7 +29,7 @@ print("=" * 52)
 
 print("\nYOUR ACCOUNT BALANCES:")
 try:
-    acc = client.get_account()
+    acc = client.account()
     shown = False
     for b in acc["balances"]:
         if float(b["free"]) > 0:
@@ -44,7 +44,7 @@ print("\nEXCHANGE RECORD OF RECENT FILLS:")
 found = 0
 for sym in ("BTCUSDT", "ETHUSDT", "BNBUSDT"):
     try:
-        for o in client.get_my_orders(symbol=sym, limit=20):
+        for o in client.get_orders(symbol=sym, limit=20):
             if o["status"] in ("FILLED", "PARTIALLY_FILLED"):
                 found += 1
                 print(
