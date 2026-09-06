@@ -1,5 +1,5 @@
 # Sentinel — Binance Agent OS Sentiment Trader
-### 🏆 Submission for Binance Agent OS Mini Hackathon — Track A ($20K) | $60K Prize Pool
+### 🏆 Submission for Binance Agent OS Mini Hackathon — Track A ($20K)
 
 > **An autonomous AI agent that determines WHEN to buy/sell BTC, BNB, and ETH based on real-time market news & sentiment, executed via Binance Agent OS.**
 
@@ -8,7 +8,6 @@
 **MCP Endpoint:** `https://agent.binance.com/mcp/agentic` (Streamable HTTP)  
 **Deadline:** Sept 8, 2026 23:59 UTC  
 **Track:** A — Build an AI Agent with Agent OS  
-**Trading Mode:** Paper-Trading (Dry-Run) on Agentic Sub-Account — SAFE for demo, instant switch to live
 
 ---
 
@@ -43,10 +42,8 @@ Sentinel is an **agentic workflow** that fuses **3 signals** into 1 disciplined 
     - Zero-Float Precision (Decimal math, respects LOT_SIZE / TICK_SIZE)
     - Pre-Trade Risk Engine (cap, slippage, exposure)
     - Clock Sync + Backoff (protects against 1021/429)
-- ✅ **Free LLM First:** Gemini 2.0 Flash free tier + VADER fallback → works with $0 cost. Swappable to OpenAI/Claude/Groq in 1 line.
 - ✅ **Explainable Trades:** Every order includes `reason: "BTC sentiment 78/100 (3 bullish headlines) + RSI 62 + MACD bullish → BUY"` — judges can audit.
-- ✅ **Beautiful Live Dashboard:** Streamlit — sentiment feed, signal tape, portfolio, P&L, trade log. One command: `streamlit run dashboard/app.py`
-- ✅ **Paper → Live in 1 env var:** `BINANCE_DRY_RUN=true` → `false`
+- 
 
 ## Architecture
 ```
