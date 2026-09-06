@@ -268,8 +268,10 @@ def build_payload():
             conf = round(sum(confs) / len(confs), 2)
             details.sort(key=lambda d: abs(d["score"] - 50), reverse=True)
             top_headline = details[0]["title"] if details else ""
+            top_source = details[0]["source"] if details else ""
         else:
             avg, conf, details = 50, 0.0, []
+            top_source = ""
             top_headline = (f"No live {coin} headlines in the last feed cycle — "
                             "re-checking in a minute")
 
@@ -282,17 +284,22 @@ def build_payload():
             "count": len(details),
             "model": model_used if rel else "live (no matches yet)",
             "top_headline": top_headline,
+            "top_headline_source": top_source,
+            "platforms": sorted({d_["source"] for d_ in details}),
             "headlines": details[:3],
             "price": prices.get(coin, {}).get("price", fb["price"]),
             "change_24h": prices.get(coin, {}).get("change_24h", fb["change_24h"]),
         }
 
+    news_platforms = sorted({h["source"] for h in headlines})
     return {
         "agent": "Sentinel — agentic sentiment trader",
         "mcp_endpoint": MCP_ENDPOINT,
+        "news_platforms": news_platforms,
         "sources": {
             "prices": "coingecko (live)" if prices else "offline fallback",
-            "news": f"{len(headlines)} live headlines" if headlines else "offline fallback",
+            "news": (f"{len(headlines)} live headlines · {len(news_platforms)} platforms"
+                     if headlines else "offline fallback"),
             "chart": "coingecko 15m candles (live)" if chart else "offline fallback",
             "sentiment": model_used,
         },
