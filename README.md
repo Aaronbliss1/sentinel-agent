@@ -112,7 +112,6 @@ python -m src.agent --continuous
 
 ### 4. Run Live Dashboard
 ```bash
-streamlit run dashboard/app.py --server.port 8501 --server.address 0.0.0.0
 # Open http://localhost:8501
 ```
 
@@ -184,7 +183,7 @@ Position sizing via Kelly_fraction / volatility. Stop-loss 1.5% trailing, take-p
 
 ## 🚀 Deploy (Vercel — dashboard + live endpoint)
 
-The deployed artifact is the **static dashboard** (`index.html`) plus the
+The deployed artifact is the **dashboard** (`index.html`) plus the
 **`/api/sentiment`** Python function:
 
 1. Push this repo to GitHub (already public).
@@ -194,18 +193,7 @@ The deployed artifact is the **static dashboard** (`index.html`) plus the
    - `https://<app>.vercel.app/` → Sentinel dashboard
    - `https://<app>.vercel.app/api/sentiment` → live paper-mode sentiment JSON
 
-Notes:
-- The Streamlit dashboard (`streamlit run dashboard/app.py`) is **local/dev
-  only** — Vercel can't host long-running apps. The static page is what
-  judges see.
-- `api/sentiment.py` is stdlib-only on purpose and uses Vercel's documented
-  `handler` (BaseHTTPRequestHandler) form. Vercel's build pipeline prefers
-  `pyproject.toml` (zero deps) over `requirements.txt`, and
-  `vercel.json` excludes heavy folders from the function bundle — deploys
-  are fast and small. Local deps come from `requirements.txt`.
-- Vercel runs in US regions where Binance returns 451, so the endpoint
-  serves the paper snapshot. Full live data flows through Agent OS MCP on
-  the agent itself (run locally or on a non-restricted host).
+
 
 ## 🧪 Tests & Reliability
 ```bash
