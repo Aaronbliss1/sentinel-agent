@@ -13,16 +13,20 @@
 ## 3. Demo video
 - Recorded a demo and posted on x ()
 
-## 4. Verify
+## 4. Verify (reproduce)
 ```bash
 pip install -r requirements.txt
-cp .env.example .env      # optional — works without any keys (paper + VADER)
 
-pytest -q                                  # unit tests pass
-python -m src.mcp_client.demo              # 4 pillars + MCP payload demo
-python -m src.mcp_client.demo --show-payload
-python -m src.agent --once --mock-news     # full agentic cycle
-streamlit run dashboard/app.py             # live dashboard on :8501
+pytest -q                                  # 5 unit tests pass
+
+# Live agent (real news → Gemini → technicals → risk → order)
+cp .env.example .env      # add testnet keys + GOOGLE_API_KEY for full path
+python -m src.agent --once --testnet       # one live cycle
+python -m src.agent --continuous --testnet # 24/7 loop
+
+# Proof: exchange's own record of testnet balances + fills
+python demo/verify_fill.py
 ```
+The Vercel dashboard works with **zero keys** (public data + VADER); with `GOOGLE_API_KEY` it scores via Gemini.
 
 
