@@ -7,8 +7,7 @@
 - Repo (public): https://github.com/Aaronbliss1/sentinel-agent
 
 ## 2. Deployed dashboard (Vercel)
-- Dashboard URL: https://<your-app>.vercel.app  ← **update with real URL**
-- Live endpoint: https://<your-app>.vercel.app/api/sentiment
+- Dashboard URL: https://sentinelagent1.vercel.app/
 
 ## 3. Demo video
 - Recorded a demo and posted on x ()
