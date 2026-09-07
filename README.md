@@ -1,13 +1,13 @@
 # Sentinel — Binance Agent OS Sentiment Trader
-### 🏆 Submission for Binance Agent OS Mini Hackathon — Track A ($20K)
+### 🏆 Submission for Binance Agent OS Mini Hackathon — Track A 
 
 > **An autonomous AI agent that determines WHEN to buy/sell BTC, BNB, and ETH based on real-time market news & sentiment, executed via Binance Agent OS.**
 
-**Tagline:** *Don't just read the news — trade it. Before the candle closes.*
+**Tagline:** *Don't just read the news, trade it. Before the candle closes.*
 
 **MCP Endpoint:** `https://agent.binance.com/mcp/agentic` (Streamable HTTP)  
-**Deadline:** Sept 8, 2026 23:59 UTC  
-**Track:** A — Build an AI Agent with Agent OS  
+
+
 
 ---
 
@@ -15,7 +15,7 @@
 Retail traders miss moves because **sentiment shifts faster than charts**. By the time you read "BlackRock Bitcoin ETF inflow +$500M", BTC is already +3%. Existing bots are either:
 - Purely technical (ignore news)
 - Purely sentiment (ignore risk)
-- Require coding, API keys, and devops hell
+- Require coding
 
 ## 💡 The Solution — Sentinel
 Sentinel is an **agentic workflow** that fuses **3 signals** into 1 disciplined trader:
